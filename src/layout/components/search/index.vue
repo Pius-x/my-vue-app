@@ -20,7 +20,7 @@ function handleSearch() {
   align-items: center;
   justify-content: center;
   height: 48px;
-  width: 40px;
+  width: 60px;
   cursor: pointer;
 
   &:hover {

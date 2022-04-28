@@ -1,35 +1,25 @@
 <script setup lang="ts">
 import { useNav } from "../hooks/nav";
 import Search from "./search/index.vue";
-import Notice from "./notice/index.vue";
-import MixNav from "./sidebar/mixNav.vue";
+import DarkMode from "./darkMode/index.vue";
 import avatars from "/@/assets/avatars.jpg";
 import Hamburger from "./sidebar/hamBurger.vue";
 import Breadcrumb from "./sidebar/breadCrumb.vue";
 import { deviceDetection } from "/@/utils/deviceDetection";
 import Screenfull from "../components/screenfull/index.vue";
 
-const { logout, onPanel, toggleSideBar, pureApp, username, avatarsStyle } = useNav();
+const { logout, toggleSideBar, pureApp, username, avatarsStyle } = useNav();
 </script>
 
 <template>
   <div class="navbar">
-    <Hamburger
-      v-if="pureApp.layout !== 'mix'"
-      :is-active="pureApp.sidebar.opened"
-      class="hamburger-container"
-      @toggleClick="toggleSideBar"
-    />
-
-    <Breadcrumb v-if="pureApp.layout !== 'mix'" class="breadcrumb-container" />
-
-    <mixNav v-if="pureApp.layout === 'mix'" />
-
-    <div v-if="pureApp.layout === 'vertical'" class="vertical-header-right">
+    <Hamburger :is-active="pureApp.sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <Breadcrumb class="breadcrumb-container" />
+    <div class="vertical-header-right">
       <!-- 菜单搜索 -->
       <Search />
-      <!-- 通知 -->
-      <Notice id="header-notice" />
+      <!-- 暗黑模式 -->
+      <DarkMode />
       <!-- 全屏 -->
       <screenfull id="header-screenfull" v-show="!deviceDetection()" />
       <!-- 退出登陆 -->
@@ -46,9 +36,6 @@ const { logout, onPanel, toggleSideBar, pureApp, username, avatarsStyle } = useN
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <span class="el-icon-setting" title="打开项目配置" @click="onPanel">
-        <IconifyIconOffline icon="setting" />
-      </span>
     </div>
   </div>
 </template>

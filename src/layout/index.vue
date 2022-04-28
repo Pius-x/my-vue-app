@@ -8,16 +8,14 @@ import { deviceDetection } from "/@/utils/deviceDetection";
 import { useMultiTagsStore } from "/@/store/modules/multiTags";
 import { useSettingStoreHook } from "/@/store/modules/settings";
 
-import backTop from "/@/assets/svg/back_top.svg?component";
+import BackTop from "/@/assets/svg/back_top.svg?component";
 import fullScreen from "/@/assets/svg/full_screen.svg?component";
 import exitScreen from "/@/assets/svg/exit_screen.svg?component";
 
 import navbar from "./components/navbar.vue";
 import tag from "./components/tag/index.vue";
-import appMain from "./components/appMain.vue";
-import setting from "./components/setting/index.vue";
+import AppMain from "./components/appMain.vue";
 import Vertical from "./components/sidebar/vertical.vue";
-import Horizontal from "./components/sidebar/horizontal.vue";
 
 const isMobile = deviceDetection();
 const pureSetting = useSettingStoreHook();
@@ -150,8 +148,8 @@ const layoutHeader = defineComponent({
       },
       {
         default: () => [
-          !pureSetting.hiddenSideBar && (layout.value.includes("vertical") || layout.value.includes("mix")) ? h(navbar) : h("div"),
-          !pureSetting.hiddenSideBar && layout.value.includes("horizontal") ? h(Horizontal) : h("div"),
+          !pureSetting.hiddenSideBar && layout.value.includes("vertical") ? h(navbar) : h("div"),
+          h("div"),
           h(
             tag,
             {},
@@ -195,8 +193,6 @@ const layoutHeader = defineComponent({
         <app-main :fixed-header="set.fixedHeader" />
       </el-scrollbar>
     </div>
-    <!-- 系统设置 -->
-    <setting />
   </div>
 </template>
 
