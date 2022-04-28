@@ -47,10 +47,17 @@ function hoverDescription(event, description) {
             {{ props.noticeItem.title }}
           </div>
         </el-tooltip>
-        <el-tag v-if="props.noticeItem?.extra" :type="props.noticeItem?.status" size="small" class="notice-title-extra">{{ props.noticeItem?.extra }} </el-tag>
+        <el-tag v-if="props.noticeItem?.extra" :type="props.noticeItem?.status" size="small" class="notice-title-extra"
+          >{{ props.noticeItem?.extra }}
+        </el-tag>
       </div>
 
-      <el-tooltip popper-class="notice-title-popper" :disabled="!descriptionTooltip" :content="props.noticeItem.description" placement="top-start">
+      <el-tooltip
+        popper-class="notice-title-popper"
+        :disabled="!descriptionTooltip"
+        :content="props.noticeItem.description"
+        placement="top-start"
+      >
         <div ref="descriptionRef" class="notice-text-description" @mouseover="hoverDescription($event, props.noticeItem.description)">
           {{ props.noticeItem.description }}
         </div>

@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { resolve } from "path";
 import pkg from "./package.json";
-import { warpperEnv, regExps } from "./build";
+import { wrapperEnv, regExps } from "./build";
 import { getPluginsList } from "./build/plugins";
 import { UserConfigExport, ConfigEnv, loadEnv } from "vite";
 
@@ -26,13 +26,7 @@ const __APP_INFO__ = {
 };
 
 export default ({ command, mode }: ConfigEnv): UserConfigExport => {
-  const {
-    VITE_PORT,
-    VITE_LEGACY,
-    VITE_PUBLIC_PATH,
-    VITE_PROXY_DOMAIN,
-    VITE_PROXY_DOMAIN_REAL
-  } = warpperEnv(loadEnv(mode, root));
+  const { VITE_PORT, VITE_LEGACY, VITE_PUBLIC_PATH, VITE_PROXY_DOMAIN, VITE_PROXY_DOMAIN_REAL } = wrapperEnv(loadEnv(mode, root));
   return {
     base: VITE_PUBLIC_PATH,
     root,
@@ -61,7 +55,7 @@ export default ({ command, mode }: ConfigEnv): UserConfigExport => {
     },
     plugins: getPluginsList(command, VITE_LEGACY),
     optimizeDeps: {
-      include: ["pinia", "vue-i18n", "lodash-es", "@vueuse/core"],
+      include: ["pinia", "lodash-es", "@vueuse/core"],
       exclude: ["@pureadmin/theme/dist/browser-utils"]
     },
     build: {

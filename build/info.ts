@@ -56,28 +56,12 @@ export function viteBuildInfo(): Plugin {
     },
     closeBundle() {
       if (config.command === "build") {
-        console.log(
-          bold(
-            green(
-              `👏欢迎使用${blue(
-                "[vue-pure-admin]"
-              )}，如果您感觉不错，记得点击后面链接给个star哦💖 https://github.com/xiaoxian521/vue-pure-admin`
-            )
-          )
-        );
         endTime = dayjs(new Date());
         recursiveDirectory(staticPath, () => {
-          console.log(
-            bold(
-              green(
-                `恭喜打包完成🎉（总用时${dayjs
-                  .duration(endTime.diff(startTime))
-                  .format("mm分ss秒")}，打包后的大小为${formatBytes(
-                  sum(fileListTotal)
-                )}）`
-              )
-            )
-          );
+          const spendTime = dayjs.duration(endTime.diff(startTime)).format("mm分ss秒");
+          const packageSize = formatBytes(sum(fileListTotal));
+          console.log(bold(green(`✨ ✨ ✨  Packaging is complete!!! ✨ ✨ ✨  `)));
+          console.log(bold(blue(`Spend time: ${spendTime} package size：${packageSize}`)));
         });
       }
     }

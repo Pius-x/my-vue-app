@@ -1,10 +1,4 @@
-import type {
-  ComponentRenderProxy,
-  VNode,
-  ComponentPublicInstance,
-  FunctionalComponent,
-  PropType as VuePropType
-} from "vue";
+import type { ComponentRenderProxy, VNode, PropType as VuePropType } from "vue";
 
 // GlobalComponents for Volar
 declare module "vue" {
@@ -72,6 +66,7 @@ declare global {
   }
 
   declare interface ViteEnv {
+    MODE: string;
     VITE_PORT: number;
     VITE_PUBLIC_PATH: string;
     VITE_PROXY_DOMAIN: string;

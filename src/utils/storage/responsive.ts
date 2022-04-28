@@ -45,8 +45,7 @@ export const injectResponsiveStorage = (app: App, config: ServerConfigs) => {
                 path: "/welcome",
                 parentPath: "/",
                 meta: {
-                  title: "menus.hshome",
-                  i18n: true,
+                  title: "首页",
                   icon: "home-filled"
                 }
               }

@@ -1,17 +1,14 @@
 import { isUrl } from "/@/utils/is";
-import { getConfig } from "/@/config";
 import { toRouteType } from "./types";
 import { openLink } from "/@/utils/link";
 import NProgress from "/@/utils/progress";
 import { findIndex } from "lodash-unified";
-import { transformI18n } from "/@/plugins/i18n";
 import { storageSession } from "/@/utils/storage";
 import { buildHierarchyTree } from "/@/utils/tree";
 import { useMultiTagsStoreHook } from "/@/store/modules/multiTags";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
-import { Router, RouteMeta, createRouter, RouteRecordRaw, RouteComponent, RouteRecordName } from "vue-router";
+import { Router, RouteMeta, createRouter, RouteRecordRaw, RouteRecordName } from "vue-router";
 import {
-  ascending,
   initRouter,
   getHistoryMode,
   getParentPaths,
@@ -21,28 +18,26 @@ import {
   formatFlatteningRoutes
 } from "./utils";
 
-import homeRouter from "./modules/home";
-import errorRouter from "./modules/error";
-import remainingRouter from "./modules/remaining";
-
 // 原始静态路由（未做任何处理）
-const routes = [homeRouter, errorRouter];
-
-// 导出处理后的静态路由（三级及以上的路由全部拍成二级）
-export const constantRoutes: Array<RouteRecordRaw> = formatTwoStageRoutes(formatFlatteningRoutes(buildHierarchyTree(ascending(routes))));
+import showRouter from "./modules/showRouter";
+import hideRouter from "./modules/hideRouter";
+import { changeTitle } from "/@/utils/func";
 
 // 用于渲染菜单，保持原始层级
-export const constantMenus: Array<RouteComponent> = ascending(routes).concat(...remainingRouter);
+export const constantMenus: Array<RouteRecordRaw> = showRouter.concat(hideRouter);
+
+// 导出处理后的静态路由（三级及以上的路由全部拍成二级）
+export const constantRoutes: Array<RouteRecordRaw> = formatTwoStageRoutes(formatFlatteningRoutes(buildHierarchyTree(showRouter)));
 
 // 不参与菜单的路由
-export const remainingPaths = Object.keys(remainingRouter).map(v => {
-  return remainingRouter[v].path;
+export const remainingPaths = formatFlatteningRoutes(hideRouter).map(v => {
+  return v.path;
 });
 
 // 创建路由实例
 export const router: Router = createRouter({
   history: getHistoryMode(),
-  routes: constantRoutes.concat(...remainingRouter),
+  routes: constantRoutes.concat(hideRouter),
   strict: true,
   scrollBehavior(to, from, savedPosition) {
     return new Promise(resolve => {
@@ -76,10 +71,10 @@ router.beforeEach((to: toRouteType, _from, next) => {
   if (!externalLink)
     to.matched.some(item => {
       if (!item.meta.title) return "";
-      const Title = getConfig().Title;
-      if (Title) document.title = `${transformI18n(item.meta.title, item.meta?.i18n)} | ${Title}`;
-      else document.title = transformI18n(item.meta.title, item.meta?.i18n);
+      changeTitle(item.meta);
     });
+
+  //判断是否登录
   if (name) {
     if (_from?.name) {
       // name为超链接
@@ -91,7 +86,8 @@ router.beforeEach((to: toRouteType, _from, next) => {
       }
     } else {
       // 刷新
-      if (usePermissionStoreHook().wholeMenus.length === 0)
+      if (usePermissionStoreHook().wholeMenus.length === 0) {
+        //刷新的时候初始化路由
         initRouter(name.username).then((router: Router) => {
           if (!useMultiTagsStoreHook().getMultiTagsCache) {
             const handTag = (path: string, parentPath: string, name: RouteRecordName, meta: RouteMeta): void => {
@@ -111,7 +107,7 @@ router.beforeEach((to: toRouteType, _from, next) => {
               return router.push(refreshRedirect);
             } else {
               const { path } = to;
-              const index = findIndex(remainingRouter, v => {
+              const index = findIndex(hideRouter, v => {
                 return v.path == path;
               });
               const routes = index === -1 ? router.options.routes[0].children : router.options.routes;
@@ -131,6 +127,7 @@ router.beforeEach((to: toRouteType, _from, next) => {
           }
           router.push(to.fullPath);
         });
+      }
       next();
     }
   } else {

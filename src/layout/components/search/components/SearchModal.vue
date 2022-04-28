@@ -3,7 +3,6 @@ import { useRouter } from "vue-router";
 import SearchResult from "./SearchResult.vue";
 import SearchFooter from "./SearchFooter.vue";
 import { deleteChildren } from "/@/utils/tree";
-import { transformI18n } from "/@/plugins/i18n";
 import { useDebounceFn, onKeyStroke } from "@vueuse/core";
 import { ref, watch, computed, nextTick, shallowRef } from "vue";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
@@ -66,7 +65,7 @@ function flatTree(arr) {
 function search() {
   const flatMenusData = flatTree(menusData.value);
   resultOptions.value = flatMenusData.filter(
-    menu => keyword.value && transformI18n(menu.meta?.title, menu.meta?.i18n).toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase().trim())
+    menu => keyword.value && menu.meta?.title.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase().trim())
   );
   if (resultOptions.value?.length > 0) {
     activePath.value = resultOptions.value[0].path;

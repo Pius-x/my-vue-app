@@ -1,10 +1,7 @@
 import { computed } from "vue";
 import { router } from "/@/router";
-import { getConfig } from "/@/config";
 import { emitter } from "/@/utils/mitt";
-import { routeMetaType } from "../types";
 import { remainingPaths } from "/@/router";
-import { transformI18n } from "/@/plugins/i18n";
 import { storageSession } from "/@/utils/storage";
 import { useAppStoreHook } from "/@/store/modules/app";
 import { useEpThemeStoreHook } from "/@/store/modules/epTheme";
@@ -33,13 +30,6 @@ export function useNav() {
   const isCollapse = computed(() => {
     return !pureApp.getSidebarStatus;
   });
-
-  // 动态title
-  function changeTitle(meta: routeMetaType) {
-    const Title = getConfig().Title;
-    if (Title) document.title = `${transformI18n(meta.title, meta.i18n)} | ${Title}`;
-    else document.title = transformI18n(meta.title, meta.i18n);
-  }
 
   // 退出登录
   function logout() {
@@ -112,7 +102,6 @@ export function useNav() {
     logout,
     backHome,
     onPanel,
-    changeTitle,
     toggleSideBar,
     menuSelect,
     handleResize,

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { isEqual } from "lodash-unified";
-import { transformI18n } from "/@/plugins/i18n";
 import { getParentPaths, findRouteByPath } from "/@/router/utils";
 import { useMultiTagsStoreHook } from "/@/store/modules/multiTags";
 import { useRoute, useRouter, RouteLocationMatched } from "vue-router";
@@ -60,7 +59,7 @@ const getBreadcrumb = (): void => {
       {
         path: "/welcome",
         parentPath: "/",
-        meta: { title: "menus.hshome", i18n: true }
+        meta: { title: "首页" }
       } as unknown as RouteLocationMatched
     ].concat(matched);
   }
@@ -94,11 +93,11 @@ const handleLink = (item: RouteLocationMatched): any => {
   <el-breadcrumb class="app-breadcrumb" separator="/">
     <transition-group appear name="breadcrumb">
       <el-breadcrumb-item v-for="(item, index) in levelList" :key="item.path">
-        <span v-if="item.redirect === 'noRedirect' || index == levelList.length - 1" class="no-redirect">{{
-          transformI18n(item.meta.title, item.meta.i18n)
-        }}</span>
+        <span v-if="item.redirect === 'noRedirect' || parseInt(index) === parseInt(levelList.length - 1)" class="no-redirect">
+          {{ item.meta.title }}
+        </span>
         <a v-else @click.prevent="handleLink(item)">
-          {{ transformI18n(item.meta.title, item.meta.i18n) }}
+          {{ item.meta.title }}
         </a>
       </el-breadcrumb-item>
     </transition-group>

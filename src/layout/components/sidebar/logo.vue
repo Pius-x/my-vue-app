@@ -1,22 +1,23 @@
 <script setup lang="ts">
-import { getCurrentInstance } from "vue";
+import { getCurEnv } from "/@/utils/func";
+import Avatar from "/@/assets/svg/logo.svg?component";
 const props = defineProps({
   collapse: Boolean
 });
 
-const title = getCurrentInstance().appContext.config.globalProperties.$config?.Title;
+const title = getCurEnv();
 </script>
 
 <template>
   <div class="sidebar-logo-container" :class="{ collapse: props.collapse }">
     <transition name="sidebarLogoFade">
       <router-link v-if="props.collapse" key="props.collapse" :title="title" class="sidebar-logo-link" to="/">
-        <FontIcon icon="team-iconlogo" svg style="width: 35px; height: 35px" />
-        <span class="sidebar-title">{{ title }}</span>
+        <avatar style="margin-top: 5px" />
+        <span style="margin-left: 5px" class="sidebar-title">{{ title }}</span>
       </router-link>
       <router-link v-else key="expand" :title="title" class="sidebar-logo-link" to="/">
-        <FontIcon icon="team-iconlogo" svg style="width: 35px; height: 35px" />
-        <span class="sidebar-title">{{ title }}</span>
+        <avatar style="margin-top: 5px" />
+        <span style="margin-left: 5px" class="sidebar-title">{{ title }}</span>
       </router-link>
     </transition>
   </div>

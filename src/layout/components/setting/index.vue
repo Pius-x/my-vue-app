@@ -141,9 +141,8 @@ function onReset() {
       path: "/welcome",
       parentPath: "/",
       meta: {
-        title: "menus.hshome",
-        icon: "home-filled",
-        i18n: true
+        title: "首页",
+        icon: "home-filled"
       }
     }
   ]);
@@ -283,7 +282,14 @@ nextTick(() => {
 <template>
   <panel>
     <el-divider>主题</el-divider>
-    <el-switch v-model="dataTheme" inline-prompt class="pure-datatheme" :active-icon="dayIcon" :inactive-icon="darkIcon" @change="dataThemeChange" />
+    <el-switch
+      v-model="dataTheme"
+      inline-prompt
+      class="pure-datatheme"
+      :active-icon="dayIcon"
+      :inactive-icon="darkIcon"
+      @change="dataThemeChange"
+    />
 
     <el-divider>导航栏模式</el-divider>
     <ul class="pure-theme">
@@ -311,7 +317,12 @@ nextTick(() => {
 
     <el-divider v-show="!dataTheme">主题色</el-divider>
     <ul class="theme-color" v-show="!dataTheme">
-      <li v-for="(item, index) in themeColors" :key="index" :style="getThemeColorStyle(item.color)" @click="setLayoutThemeColor(item.themeColor)">
+      <li
+        v-for="(item, index) in themeColors"
+        :key="index"
+        :style="getThemeColorStyle(item.color)"
+        @click="setLayoutThemeColor(item.themeColor)"
+      >
         <el-icon style="margin: 0.1em 0.1em 0 0" :size="17" :color="getThemeColor(item.themeColor)">
           <IconifyIconOffline icon="check" />
         </el-icon>
@@ -322,15 +333,36 @@ nextTick(() => {
     <ul class="setting">
       <li v-show="!dataTheme">
         <span>灰色模式</span>
-        <el-switch v-model="settings.greyVal" inline-prompt inactive-color="#a6a6a6" active-text="开" inactive-text="关" @change="greyChange" />
+        <el-switch
+          v-model="settings.greyVal"
+          inline-prompt
+          inactive-color="#a6a6a6"
+          active-text="开"
+          inactive-text="关"
+          @change="greyChange"
+        />
       </li>
       <li v-show="!dataTheme">
         <span>色弱模式</span>
-        <el-switch v-model="settings.weakVal" inline-prompt inactive-color="#a6a6a6" active-text="开" inactive-text="关" @change="weekChange" />
+        <el-switch
+          v-model="settings.weakVal"
+          inline-prompt
+          inactive-color="#a6a6a6"
+          active-text="开"
+          inactive-text="关"
+          @change="weekChange"
+        />
       </li>
       <li>
         <span>隐藏标签页</span>
-        <el-switch v-model="settings.tabsVal" inline-prompt inactive-color="#a6a6a6" active-text="开" inactive-text="关" @change="tagsChange" />
+        <el-switch
+          v-model="settings.tabsVal"
+          inline-prompt
+          inactive-color="#a6a6a6"
+          active-text="开"
+          inactive-text="关"
+          @change="tagsChange"
+        />
       </li>
       <li>
         <span>侧边栏Logo</span>

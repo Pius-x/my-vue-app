@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { h, reactive, computed, onMounted, defineComponent, getCurrentInstance } from "vue";
 import { setType } from "./types";
-import { useI18n } from "vue-i18n";
 import { routerArrays } from "./types";
 import { emitter } from "/@/utils/mitt";
 import { useAppStoreHook } from "/@/store/modules/app";
@@ -30,12 +29,6 @@ const layout = computed(() => {
   if (useMultiTagsStore().multiTagsCache && (!instance.$storage.tags || instance.$storage.tags.length === 0)) {
     // eslint-disable-next-line vue/no-side-effects-in-computed-properties
     instance.$storage.tags = routerArrays;
-  }
-  // 国际化
-  if (!instance.$storage.locale) {
-    // eslint-disable-next-line
-    instance.$storage.locale = { locale: instance.$config?.Locale ?? "zh" };
-    useI18n().locale.value = instance.$config?.Locale ?? "zh";
   }
   // 导航
   if (!instance.$storage.layout) {
@@ -183,7 +176,11 @@ const layoutHeader = defineComponent({
 
 <template>
   <div :class="['app-wrapper', set.classes]" v-resize>
-    <div v-show="set.device === 'mobile' && set.sidebar.opened && layout.includes('vertical')" class="app-mask" @click="useAppStoreHook().toggleSideBar()" />
+    <div
+      v-show="set.device === 'mobile' && set.sidebar.opened && layout.includes('vertical')"
+      class="app-mask"
+      @click="useAppStoreHook().toggleSideBar()"
+    />
     <Vertical v-show="!pureSetting.hiddenSideBar && (layout.includes('vertical') || layout.includes('mix'))" />
     <div :class="['main-container', pureSetting.hiddenSideBar ? 'main-hidden' : '']">
       <div v-if="set.fixedHeader">

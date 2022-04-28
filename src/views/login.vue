@@ -5,8 +5,8 @@ import { initRouter } from "/@/router/utils";
 import { storageSession } from "/@/utils/storage";
 import { addClass, removeClass } from "/@/utils/operate";
 import bg from "/@/assets/login/bg.png";
-import avatar from "/@/assets/login/avatar.svg?component";
-import illustration from "/@/assets/login/illustration.svg?component";
+import Avatar from "/@/assets/login/avatar.svg?component";
+import Illustration from "/@/assets/login/illustration.svg?component";
 
 const router = useRouter();
 
@@ -18,6 +18,7 @@ const onLogin = (): void => {
     username: "admin",
     accessToken: "eyJhbGciOiJIUzUxMiJ9.test"
   });
+  //登录的时候初始化路由
   initRouter("admin").then(() => {});
   router.push("/");
 };
@@ -62,7 +63,7 @@ function onPwdBlur() {
             }
           }"
         >
-          Pure Admin
+          Super Fox GM
         </h2>
         <div
           class="input-group user focus"

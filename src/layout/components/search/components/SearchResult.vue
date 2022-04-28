@@ -11,7 +11,7 @@
         @mouseenter="handleMouse(item)"
       >
         <component :is="useRenderIcon(item.meta?.icon ?? 'bookmark')" />
-        <span class="result-item-title">{{ t(item.meta?.title) }}</span>
+        <span class="result-item-title">{{ item.meta?.title }}</span>
         <enterOutlined />
       </div>
     </template>
@@ -20,12 +20,9 @@
 
 <script lang="ts" setup>
 import { computed } from "vue";
-import { useI18n } from "vue-i18n";
 import { useEpThemeStoreHook } from "/@/store/modules/epTheme";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
-import enterOutlined from "/@/assets/svg/enter_outlined.svg?component";
-
-const { t } = useI18n();
+import EnterOutlined from "/@/assets/svg/enter_outlined.svg?component";
 
 interface optionsItem {
   path: string;
