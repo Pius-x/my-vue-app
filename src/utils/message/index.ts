@@ -1,38 +1,11 @@
 import { ElMessage } from "element-plus";
 
-// 消息
-const Message = (message: string): any => {
+// 统一消息函数
+export const showMessage = (message: string, type: "success" | "warning" | "info" | "error", showClose = false): any => {
+  message = message.length === 0 ? "发生未知错误！" : message;
   return ElMessage({
-    showClose: true,
-    message
-  });
-};
-
-// 成功
-const successMessage = (message: string): any => {
-  return ElMessage({
-    showClose: true,
+    showClose,
     message,
-    type: "success"
+    type
   });
 };
-
-// 警告
-const warnMessage = (message: string): any => {
-  return ElMessage({
-    showClose: true,
-    message,
-    type: "warning"
-  });
-};
-
-// 失败
-const errorMessage = (message: string): any => {
-  return ElMessage({
-    showClose: true,
-    message,
-    type: "error"
-  });
-};
-
-export { Message, successMessage, warnMessage, errorMessage };

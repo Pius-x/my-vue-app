@@ -22,6 +22,7 @@ import {
 import showRouter from "./modules/showRouter";
 import hideRouter from "./modules/hideRouter";
 import { changeTitle } from "/@/utils/func";
+import { useUserStoreHook } from "/@/store/modules/user";
 
 // 用于渲染菜单，保持原始层级
 export const constantMenus: Array<RouteRecordRaw> = showRouter.concat(hideRouter);
@@ -65,7 +66,7 @@ router.beforeEach((to: toRouteType, _from, next) => {
       handleAliveRoute(newMatched);
     }
   }
-  const name = storageSession.getItem("info");
+  const userInfo = storageSession.getItem("user-info");
   NProgress.start();
   const externalLink = isUrl(to?.name);
   if (!externalLink)
@@ -75,7 +76,9 @@ router.beforeEach((to: toRouteType, _from, next) => {
     });
 
   //判断是否登录
-  if (name) {
+  if (userInfo) {
+    //恢复个人信息
+    useUserStoreHook().setUserInfo(userInfo);
     if (_from?.name) {
       // name为超链接
       if (externalLink) {
@@ -85,10 +88,11 @@ router.beforeEach((to: toRouteType, _from, next) => {
         next();
       }
     } else {
-      // 刷新
+      // 点击刷新时 更新路由
       if (usePermissionStoreHook().wholeMenus.length === 0) {
         //刷新的时候初始化路由
-        initRouter(name.username).then((router: Router) => {
+        initRouter().then((router: Router) => {
+          //恢复标签信息
           if (!useMultiTagsStoreHook().getMultiTagsCache) {
             const handTag = (path: string, parentPath: string, name: RouteRecordName, meta: RouteMeta): void => {
               useMultiTagsStoreHook().handleTags("push", {

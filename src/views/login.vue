@@ -2,25 +2,41 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { initRouter } from "/@/router/utils";
-import { storageSession } from "/@/utils/storage";
 import { addClass, removeClass } from "/@/utils/operate";
 import bg from "/@/assets/login/bg.png";
 import Avatar from "/@/assets/login/avatar.svg?component";
 import Illustration from "/@/assets/login/illustration.svg?component";
+import { useUserStoreHook } from "/@/store/modules/user";
+import { isEmpty } from "/@/utils/is";
+import { showMessage } from "/@/utils/message";
 
 const router = useRouter();
 
-let user = ref("admin");
-let pwd = ref("123456");
+let user = ref("");
+let pwd = ref("");
 
 const onLogin = (): void => {
-  storageSession.setItem("info", {
-    username: "admin",
-    accessToken: "eyJhbGciOiJIUzUxMiJ9.test"
-  });
-  //登录的时候初始化路由
-  initRouter("admin").then(() => {});
-  router.push("/");
+  //用户名判空
+  if (isEmpty(user.value)) {
+    showMessage("用户名不能为空！", "error");
+    return;
+  }
+  //密码判空
+  if (isEmpty(pwd.value)) {
+    showMessage("密码不能为空！", "error");
+    return;
+  }
+
+  useUserStoreHook()
+    .loginByUsername({ userName: user.value, password: pwd.value })
+    .then(() => {
+      //登录的时候初始化路由
+      initRouter().then(() => {});
+      router.push("/");
+    })
+    .catch(() => {
+      return;
+    });
 };
 
 function onUserFocus() {
@@ -108,7 +124,7 @@ function onPwdBlur() {
           </div>
           <div>
             <h5>密码</h5>
-            <input type="password" class="input" v-model="pwd" @focus="onPwdFocus" @blur="onPwdBlur" />
+            <input type="password" class="input" v-model="pwd" @focus="onPwdFocus" @blur="onPwdBlur" @keydown.enter="onLogin" />
           </div>
         </div>
         <button

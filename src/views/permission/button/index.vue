@@ -5,18 +5,9 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { storageSession } from "/@/utils/storage";
+const auth = "admin";
 
-const auth = ref<boolean>(storageSession.getItem("info").username || "admin");
-
-function changRole(value) {
-  storageSession.setItem("info", {
-    username: value,
-    accessToken: `eyJhbGciOiJIUzUxMiJ9.${value}`
-  });
-  window.location.reload();
-}
+function changRole(value) {}
 </script>
 
 <template>

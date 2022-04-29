@@ -26,6 +26,7 @@ const showRouter: Array<RouteRecordRaw> = [
   },
   {
     path: "/permission",
+    name: "permission",
     redirect: "/permission/page/index",
     meta: {
       title: "权限管理",
@@ -42,7 +43,7 @@ const showRouter: Array<RouteRecordRaw> = [
         }
       },
       {
-        path: "/permission/button/index",
+        path: "/permission/button",
         name: "permissionButton",
         component: () => import("/@/views/permission/button/index.vue"),
 

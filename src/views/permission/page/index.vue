@@ -5,27 +5,11 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, unref } from "vue";
-import { storageSession } from "/@/utils/storage";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
 
-let purview = ref<string>(storageSession.getItem("info").username);
+let purview = "";
 
-function changRole() {
-  if (unref(purview) === "admin") {
-    storageSession.setItem("info", {
-      username: "test",
-      accessToken: "eyJhbGciOiJIUzUxMiJ9.test"
-    });
-    window.location.reload();
-  } else {
-    storageSession.setItem("info", {
-      username: "admin",
-      accessToken: "eyJhbGciOiJIUzUxMiJ9.admin"
-    });
-    window.location.reload();
-  }
-}
+function changRole() {}
 </script>
 
 <template>

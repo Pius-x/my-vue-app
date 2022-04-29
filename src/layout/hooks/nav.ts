@@ -2,15 +2,15 @@ import { computed } from "vue";
 import { router } from "/@/router";
 import { emitter } from "/@/utils/mitt";
 import { remainingPaths } from "/@/router";
-import { storageSession } from "/@/utils/storage";
 import { useAppStoreHook } from "/@/store/modules/app";
+import { useUserStore } from "/@/store/modules/user";
 
 const errorInfo = "当前路由配置不正确，请检查配置";
 
 export function useNav() {
   const pureApp = useAppStoreHook();
   // 用户名
-  const username: string = storageSession.getItem("info")?.username;
+  const username: string = useUserStore()?.name;
 
   const avatarsStyle = computed(() => {
     return username ? { marginRight: "10px" } : "";
@@ -19,12 +19,6 @@ export function useNav() {
   const isCollapse = computed(() => {
     return !pureApp.getSidebarStatus;
   });
-
-  // 退出登录
-  function logout() {
-    storageSession.removeItem("info");
-    router.push("/login");
-  }
 
   function backHome() {
     router.push("/welcome");
@@ -84,7 +78,6 @@ export function useNav() {
   }
 
   return {
-    logout,
     backHome,
     toggleSideBar,
     menuSelect,

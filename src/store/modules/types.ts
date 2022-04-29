@@ -36,6 +36,12 @@ export type setType = {
 };
 
 export type userType = {
+  id: number;
+  expiresAt: number;
+  account: string;
   token: string;
-  name?: string;
+  gid: number;
+  headPic: number;
+  name: string;
+  routerList?: { path: string; onlyRead: number }[];
 };

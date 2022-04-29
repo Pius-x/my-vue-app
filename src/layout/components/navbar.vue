@@ -7,8 +7,15 @@ import Hamburger from "./sidebar/hamBurger.vue";
 import Breadcrumb from "./sidebar/breadCrumb.vue";
 import { deviceDetection } from "/@/utils/deviceDetection";
 import Screenfull from "../components/screenfull/index.vue";
+import { useUserStore } from "/@/store/modules/user";
 
-const { logout, toggleSideBar, pureApp, username, avatarsStyle } = useNav();
+const { toggleSideBar, pureApp, username, avatarsStyle } = useNav();
+
+function loginOut() {
+  //清空本地数据
+  useUserStore().logOut();
+  location.reload();
+}
 </script>
 
 <template>
@@ -30,7 +37,7 @@ const { logout, toggleSideBar, pureApp, username, avatarsStyle } = useNav();
         </span>
         <template #dropdown>
           <el-dropdown-menu class="logout">
-            <el-dropdown-item @click="logout">
+            <el-dropdown-item @click="loginOut">
               <IconifyIconOffline icon="logout-circle-r-line" style="margin: 5px" />退出系统</el-dropdown-item
             >
           </el-dropdown-menu>

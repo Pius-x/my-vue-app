@@ -2,44 +2,42 @@ import { defineStore } from "pinia";
 import { store } from "/@/store";
 import { userType } from "./types";
 import { router } from "/@/router";
-import { storageSession } from "/@/utils/storage";
-import { getLogin, refreshToken } from "/@/api/user";
-import { getToken, setToken, removeToken } from "/@/utils/auth";
-import { useMultiTagsStoreHook } from "/@/store/modules/multiTags";
-
-const data = getToken();
-let token = "";
-let name = "";
-if (data) {
-  const dataJson = JSON.parse(data);
-  if (dataJson) {
-    token = dataJson?.accessToken;
-    name = dataJson?.name ?? "admin";
-  }
-}
+import { storageLocal, storageSession } from "/@/utils/storage";
+import { setToken, removeToken } from "/@/utils/auth";
+import { http } from "/@/utils/http";
+import { HttpResponse } from "/@/utils/http/types";
 
 export const useUserStore = defineStore({
   id: "pure-user",
   state: (): userType => ({
-    token,
-    name
+    id: 0,
+    account: "",
+    expiresAt: 0,
+    token: "",
+    gid: 0,
+    headPic: 0,
+    name: "",
+    routerList: []
   }),
   actions: {
-    SET_TOKEN(token) {
-      this.token = token;
+    setUserInfo(userInfo) {
+      this.id = userInfo.id;
+      this.account = userInfo.account;
+      this.expiresAt = userInfo.expiresAt;
+      this.token = userInfo.token;
+      this.gid = userInfo.gid;
+      this.headPic = userInfo.headPic;
+      this.name = userInfo.name;
+      this.routerList = userInfo.routerList;
     },
-    SET_NAME(name) {
-      this.name = name;
-    },
-    // 登入
+    // 登入，数据缓存
     async loginByUsername(data) {
       return new Promise<void>((resolve, reject) => {
-        getLogin(data)
-          .then(data => {
-            if (data) {
-              setToken(data);
-              resolve();
-            }
+        http
+          .post("base/login", data)
+          .then((data: HttpResponse) => {
+            setToken(data.data);
+            resolve();
           })
           .catch(error => {
             reject(error);
@@ -52,26 +50,8 @@ export const useUserStore = defineStore({
       this.name = "";
       removeToken();
       storageSession.clear();
-      useMultiTagsStoreHook().handleTags("equal", [
-        {
-          path: "/welcome",
-          parentPath: "/",
-          meta: {
-            title: "首页",
-            icon: "home-filled"
-          }
-        }
-      ]);
+      storageLocal.clear();
       router.push("/login");
-    },
-    // 刷新token
-    async refreshToken(data) {
-      return refreshToken(data).then(data => {
-        if (data) {
-          setToken(data);
-          return data;
-        }
-      });
     }
   }
 });

@@ -1,11 +1,12 @@
 import { RouterHistory, RouteRecordRaw, RouteComponent, createWebHistory, createWebHashHistory, RouteRecordNormalized } from "vue-router";
 import { remainingPaths, router } from "./index";
-import { http } from "/@/utils/http";
 import { loadEnv } from "../../build";
 import { useTimeoutFn } from "@vueuse/core";
 import { RouteConfigs } from "/@/layout/types";
 import { buildHierarchyTree } from "/@/utils/tree";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
+import { useUserStore } from "/@/store/modules/user";
+import showRouter from "/@/router/modules/showRouter";
 const Layout = () => import("/@/layout/index.vue");
 const IFrame = () => import("/@/layout/frameView.vue");
 // https://cn.vitejs.dev/guide/features.html#glob-import
@@ -87,54 +88,51 @@ function findRouteByPath(path: string, routes: RouteRecordRaw[]) {
   }
 }
 
-// 重置路由
-function resetRouter(): void {
+//有权限的动态路由表
+function dynamicRouter(): string[] {
+  const routerList = useUserStore().routerList;
+  const allShowRouter = showRouter;
+
+  let routers: string[];
+  if (routerList.length === 1 && routerList[0].path === "/") {
+    routers = formatFlatteningRoutes(allShowRouter).map(v => {
+      return v.path;
+    });
+  } else {
+    routers = routerList.map(item => {
+      return item.path;
+    });
+  }
+
+  return routers.concat(remainingPaths, ["/", "/welcome"]);
+}
+
+// 过滤无权限路由
+function filterRouter(showRouters: string[]): void {
   router.getRoutes().forEach(route => {
-    const { name } = route;
-    if (name) {
+    const { name, path } = route;
+
+    if (name && !showRouters.includes(path)) {
+      //删除路由权限
       router.hasRoute(name) && router.removeRoute(name);
     }
   });
 }
 
 // 初始化路由
-function initRouter(name: string) {
+function initRouter() {
   return new Promise(resolve => {
-    http.post("/base/getAsyncRoutes", { name }).then(({ data: info }) => {
-      if (info.length !== 0) {
-        //todo 后端传路由的path 在这里过滤掉无权限的路由
-        // console.log(info);
-        // info[0].children.pop();
-        formatFlatteningRoutes(addAsyncRoutes(info)).map((v: RouteRecordRaw) => {
-          // 防止重复添加路由
-          if (router.options.routes[0].children.findIndex(value => value.path === v.path) !== -1) {
-            return;
-          }
+    //可展示的路由
+    const showRouters = dynamicRouter();
+    //过滤无权限的路由
+    filterRouter(showRouters);
+    resolve(router);
+    //过滤无权限的导航栏
+    usePermissionStoreHook().changeNavbar(showRouters);
 
-          // 切记将路由push到routes后还需要使用addRoute，这样路由才能正常跳转
-          router.options.routes[0].children.push(v);
-          // 最终路由进行升序
-          ascending(router.options.routes[0].children);
-          if (!router.hasRoute(v?.name)) {
-            router.addRoute(v);
-          }
-          // console.log(router.options.routes[0].children.pop());
-          // if (v.path === "/permission/page") {
-          //   console.log(v.path);
-          //   return;
-          // }
-          const flattenRouters = router.getRoutes().find(n => n.path === "/");
-          router.addRoute(flattenRouters);
-
-          resolve(router);
-        });
-      }
-      usePermissionStoreHook().changeSetting(info);
-
-      router.addRoute({
-        path: "/:pathMatch(.*)",
-        redirect: "/error/404"
-      });
+    router.addRoute({
+      path: "/:pathMatch(.*)",
+      redirect: "/error/404"
     });
   });
 }
@@ -279,7 +277,6 @@ export {
   ascending,
   filterTree,
   initRouter,
-  resetRouter,
   hasPermissions,
   getHistoryMode,
   addAsyncRoutes,

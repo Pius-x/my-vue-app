@@ -3,7 +3,6 @@ import { store } from "/@/store";
 import { cacheType } from "./types";
 import { constantMenus } from "/@/router";
 import { cloneDeep } from "lodash-unified";
-import { RouteConfigs } from "/@/layout/types";
 import { ascending, filterTree } from "/@/router/utils";
 
 export const usePermissionStore = defineStore({
@@ -25,25 +24,33 @@ export const usePermissionStore = defineStore({
       if (this.wholeMenus.length > 0) return;
       this.wholeMenus = filterTree(ascending(this.constantMenus.concat(routes)));
 
-      this.menusTree = cloneDeep(filterTree(ascending(this.constantMenus.concat(routes))));
-
-      const getButtonAuth = (arrRoutes: Array<RouteConfigs>) => {
-        if (!arrRoutes || !arrRoutes.length) return;
-        arrRoutes.forEach((v: RouteConfigs) => {
-          if (v.meta && v.meta.authority) {
-            this.buttonAuth.push(...v.meta.authority);
-          }
-          if (v.children) {
-            getButtonAuth(v.children);
-          }
-        });
-      };
-
-      getButtonAuth(this.wholeMenus);
+      this.menusTree = cloneDeep(this.wholeMenus);
     },
     async changeSetting(routes) {
       await this.asyncActionRoutes(routes);
     },
+
+    async changeNavbar(routes) {
+      await this.asyncActionNavbar(routes);
+    },
+
+    // 获取异步路由菜单
+    asyncActionNavbar(routes) {
+      // if (this.wholeMenus.length > 0) return;
+
+      function filterNavbar(constantMenus, routes) {
+        const newTree = constantMenus.filter((v: { path: string }) => {
+          return routes.includes(v.path);
+        });
+        newTree.forEach((v: { children }) => v.children && (v.children = filterNavbar(v.children, routes)));
+        return newTree;
+      }
+
+      const allNavbar = this.constantMenus;
+      this.wholeMenus = filterNavbar(filterTree(allNavbar), routes);
+      this.menusTree = cloneDeep(this.wholeMenus);
+    },
+
     cacheOperate({ mode, name }: cacheType) {
       switch (mode) {
         case "add":

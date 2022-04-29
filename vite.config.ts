@@ -35,6 +35,7 @@ export default ({ command, mode }: ConfigEnv): UserConfigExport => {
     },
     // 服务端渲染
     server: {
+      open: true,
       // 是否开启 https
       https: false,
       // 端口号
