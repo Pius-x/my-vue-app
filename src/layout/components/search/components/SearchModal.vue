@@ -2,6 +2,7 @@
 import { useRouter } from "vue-router";
 import SearchResult from "./SearchResult.vue";
 import SearchFooter from "./SearchFooter.vue";
+import EpSearch from "~icons/ep/search";
 import { deleteChildren } from "/@/utils/tree";
 import { useDebounceFn, onKeyStroke } from "@vueuse/core";
 import { ref, watch, computed, nextTick, shallowRef } from "vue";
@@ -125,7 +126,7 @@ onKeyStroke("ArrowDown", handleDown);
     <el-input ref="inputRef" v-model="keyword" clearable placeholder="请输入关键词搜索" @input="handleSearch">
       <template #prefix>
         <span class="el-input__icon">
-          <IconifyIconOffline icon="search" />
+          <ep-search />
         </span>
       </template>
     </el-input>

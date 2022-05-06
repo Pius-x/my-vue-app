@@ -9,6 +9,8 @@ import Illustration from "/@/assets/login/illustration.svg?component";
 import { useUserStoreHook } from "/@/store/modules/user";
 import { isEmpty } from "/@/utils/is";
 import { showMessage } from "/@/utils/message";
+import RiUser from "~icons/ri/user-3-fill";
+import RiLock from "~icons/ri/lock-fill";
 
 const router = useRouter();
 
@@ -97,7 +99,7 @@ function onPwdBlur() {
           }"
         >
           <div class="icon">
-            <IconifyIconOffline icon="user" width="14" height="14" />
+            <ri-user style="height: 14px; width: 14px" />
           </div>
           <div>
             <h5>用户名</h5>
@@ -120,7 +122,7 @@ function onPwdBlur() {
           }"
         >
           <div class="icon">
-            <IconifyIconOffline icon="lock" width="14" height="14" />
+            <ri-lock style="width: 14px; height: 14px" />
           </div>
           <div>
             <h5>密码</h5>

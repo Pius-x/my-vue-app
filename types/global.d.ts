@@ -2,11 +2,7 @@ import type { ComponentRenderProxy, VNode, PropType as VuePropType } from "vue";
 
 // GlobalComponents for Volar
 declare module "vue" {
-  export interface GlobalComponents {
-    IconifyIconOffline: typeof import("../src/components/ReIcon")["IconifyIconOffline"];
-    IconifyIconOnline: typeof import("../src/components/ReIcon")["IconifyIconOnline"];
-    FontIcon: typeof import("../src/components/ReIcon")["FontIcon"];
-  }
+  export interface GlobalComponents {}
 }
 
 declare global {

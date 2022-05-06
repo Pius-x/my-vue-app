@@ -52,6 +52,9 @@ export const useUserStore = defineStore({
       storageSession.clear();
       storageLocal.clear();
       router.push("/login");
+
+      //刷新页面
+      location.reload();
     }
   }
 });

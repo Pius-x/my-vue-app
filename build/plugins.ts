@@ -4,19 +4,18 @@ import svgLoader from "vite-svg-loader";
 import legacy from "@vitejs/plugin-legacy";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import WindiCSS from "vite-plugin-windicss";
-import { viteMockServe } from "vite-plugin-mock";
 // import ElementPlus from "unplugin-element-plus/vite";
 import { visualizer } from "rollup-plugin-visualizer";
 import removeConsole from "vite-plugin-remove-console";
 import themePreprocessorPlugin from "@pureadmin/theme";
+import Icons from "unplugin-icons/vite";
 import { genScssMultipleScopeVars } from "/@/layout/theme";
 
 export function getPluginsList(command, VITE_LEGACY) {
-  const prodMock = true;
   const lifecycle = process.env.npm_lifecycle_event;
   return [
     vue(),
-
+    Icons({ compiler: "vue3", autoInstall: true }),
     // jsx、tsx语法支持
     vueJsx(),
     WindiCSS(),
@@ -40,17 +39,6 @@ export function getPluginsList(command, VITE_LEGACY) {
     // svg组件化支持
     svgLoader(),
     // ElementPlus({}),
-    // mock支持
-    viteMockServe({
-      mockPath: "mock",
-      localEnabled: command === "serve",
-      prodEnabled: command !== "serve" && prodMock,
-      injectCode: `
-          import { setupProdMockServer } from './mockProdServer';
-          setupProdMockServer();
-        `,
-      logger: true
-    }),
     // 是否为打包后的文件提供传统浏览器兼容性支持
     VITE_LEGACY
       ? legacy({

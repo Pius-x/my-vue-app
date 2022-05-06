@@ -1,24 +1,26 @@
 <template>
   <div class="search-footer">
     <span class="search-footer-item">
-      <enterOutlined class="icon" />
+      <enter-outlined style="width: 20px; height: 20px" class="icon" />
       确认
     </span>
     <span class="search-footer-item">
-      <IconifyIconOffline icon="arrow-up-line" class="icon" />
-      <IconifyIconOffline icon="arrow-down-line" class="icon" />
+      <arrow-up-line class="icon" style="width: 20px; height: 20px" />
+      <arrow-down-line class="icon" style="width: 20px; height: 20px" />
       切换
     </span>
     <span class="search-footer-item">
-      <mdiKeyboardEsc class="icon" />
+      <keyboard-esc class="icon" style="width: 20px; height: 20px" />
       关闭
     </span>
   </div>
 </template>
 
 <script lang="ts" setup>
-import enterOutlined from "/@/assets/svg/enter_outlined.svg?component";
-import mdiKeyboardEsc from "/@/assets/svg/mdi_keyboard_esc.svg?component";
+import ArrowUpLine from "~icons/ri/arrow-up-line";
+import ArrowDownLine from "~icons/ri/arrow-down-line";
+import EnterOutlined from "~icons/ant-design/enter-outlined";
+import KeyboardEsc from "~icons/mdi/keyboard-esc";
 </script>
 <style lang="scss" scoped>
 .search-footer {

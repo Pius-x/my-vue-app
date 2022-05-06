@@ -1,6 +1,6 @@
 import { iconType } from "./types";
-import { h, defineComponent, Component } from "vue";
-import { IconifyIconOffline, FontIcon } from "../index";
+import { h, defineComponent, Component, defineAsyncComponent } from "vue";
+import { FontIcon } from "../index";
 
 /**
  * 支持fontawesome4、5+、iconfont、remixicon、element-plus的icons、自定义svg
@@ -13,6 +13,7 @@ export function useRenderIcon(icon: string, attrs?: iconType): Component {
   const ifReg = /^IF-/;
   // typeof icon === "function" 属于SVG
   if (ifReg.test(icon)) {
+    console.log(icon);
     // iconfont
     const name = icon.split(ifReg)[1];
     const iconName = name.slice(0, name.indexOf(" ") == -1 ? name.length : name.indexOf(" "));
@@ -27,18 +28,8 @@ export function useRenderIcon(icon: string, attrs?: iconType): Component {
         });
       }
     });
-  } else if (typeof icon === "function") {
-    // svg
-    return icon;
   } else {
-    return defineComponent({
-      name: "Icon",
-      render() {
-        return h(IconifyIconOffline, {
-          icon: icon,
-          ...attrs
-        });
-      }
-    });
+    // svg
+    return defineAsyncComponent(() => (typeof icon === "object" ? icon : import("~icons/ep/menu")));
   }
 }

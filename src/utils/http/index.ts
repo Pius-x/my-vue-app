@@ -62,6 +62,8 @@ class PureHttp {
             useUserStore().logOut();
           } else {
             config.headers["Authorization"] = "Bearer " + userInfo.token;
+            config.headers["x-token"] = userInfo.token;
+            config.headers["x-account"] = userInfo.account;
           }
         }
 

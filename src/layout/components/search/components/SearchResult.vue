@@ -22,7 +22,7 @@
 import { computed } from "vue";
 import { useEpThemeStoreHook } from "/@/store/modules/epTheme";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
-import EnterOutlined from "/@/assets/svg/enter_outlined.svg?component";
+import EnterOutlined from "~icons/ant-design/enter-outlined";
 
 interface optionsItem {
   path: string;

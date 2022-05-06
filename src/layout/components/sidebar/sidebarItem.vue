@@ -5,6 +5,7 @@ import { childrenType } from "../../types";
 import { useAppStoreHook } from "/@/store/modules/app";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
 import { ref, PropType, nextTick, computed, CSSProperties } from "vue";
+import { FontIcon } from "/@/components/ReIcon";
 
 const { pureApp } = useNav();
 const menuMode = ["vertical", "mix"].includes(pureApp.layout);
@@ -154,13 +155,13 @@ function resolvePath(routePath) {
               {{ onlyOneChild.meta.title }}
             </span>
           </el-tooltip>
-          <FontIcon
+          <font-icon
             v-if="onlyOneChild.meta.extraIcon"
             width="30px"
             height="30px"
             :style="getExtraIconStyle"
             :icon="onlyOneChild.meta.extraIcon.name"
-            :svg="onlyOneChild.meta.extraIcon.svg ? true : false"
+            :svg="onlyOneChild.meta.extraIcon.svg"
           />
         </div>
       </template>
@@ -183,13 +184,13 @@ function resolvePath(routePath) {
           </span>
         </div>
       </el-tooltip>
-      <FontIcon
+      <font-icon
         v-if="props.item.meta.extraIcon"
         width="30px"
         height="30px"
         style="position: absolute; right: 10px"
         :icon="props.item.meta.extraIcon.name"
-        :svg="props.item.meta.extraIcon.svg ? true : false"
+        :svg="props.item.meta.extraIcon.svg"
       />
     </template>
     <sidebar-item

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { SearchModal } from "./components";
 import useBoolean from "../../hooks/useBoolean";
+import EpSearch from "~icons/ep/search";
 const { bool: show, toggle } = useBoolean();
 function handleSearch() {
   toggle();
@@ -9,7 +10,7 @@ function handleSearch() {
 
 <template>
   <div class="search-container" @click="handleSearch">
-    <IconifyIconOffline icon="search" />
+    <ep-search />
   </div>
   <SearchModal v-model:value="show" />
 </template>

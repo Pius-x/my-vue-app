@@ -9,7 +9,7 @@ const showRouter: Array<RouteRecordRaw> = [
     component: Layout,
     redirect: "/welcome",
     meta: {
-      icon: "home-filled",
+      icon: import("~icons/ep/home-filled"),
       title: "首页",
       rank: 0
     },
@@ -30,7 +30,7 @@ const showRouter: Array<RouteRecordRaw> = [
     redirect: "/permission/page/index",
     meta: {
       title: "权限管理",
-      icon: "lollipop",
+      icon: import("~icons/ep/lollipop"),
       rank: 7
     },
     children: [
@@ -39,7 +39,11 @@ const showRouter: Array<RouteRecordRaw> = [
         component: () => import("/@/views/permission/page/index.vue"),
         name: "permissionPage",
         meta: {
-          title: "页面权限"
+          title: "页面权限",
+          extraIcon: {
+            svg: true,
+            name: "team-iconxinpin"
+          }
         }
       },
       {

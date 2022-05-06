@@ -8,7 +8,7 @@ import { deviceDetection } from "/@/utils/deviceDetection";
 import { useMultiTagsStore } from "/@/store/modules/multiTags";
 import { useSettingStoreHook } from "/@/store/modules/settings";
 
-import BackTop from "/@/assets/svg/back_top.svg?component";
+import BackTop from "~icons/ri/rocket-line";
 import fullScreen from "/@/assets/svg/full_screen.svg?component";
 import exitScreen from "/@/assets/svg/exit_screen.svg?component";
 

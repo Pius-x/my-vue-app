@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { h, ref, computed, Transition, defineComponent, getCurrentInstance } from "vue";
-import backTop from "/@/assets/svg/back_top.svg?component";
+import BackTop from "~icons/ri/rocket-line";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
 
 const props = defineProps({

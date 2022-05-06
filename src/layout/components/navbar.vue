@@ -2,20 +2,13 @@
 import { useNav } from "../hooks/nav";
 import Search from "./search/index.vue";
 import DarkMode from "./darkMode/index.vue";
-import avatars from "/@/assets/avatars.jpg";
+import Setting from "./setting/index.vue";
 import Hamburger from "./sidebar/hamBurger.vue";
 import Breadcrumb from "./sidebar/breadCrumb.vue";
 import { deviceDetection } from "/@/utils/deviceDetection";
 import Screenfull from "../components/screenfull/index.vue";
-import { useUserStore } from "/@/store/modules/user";
 
-const { toggleSideBar, pureApp, username, avatarsStyle } = useNav();
-
-function loginOut() {
-  //清空本地数据
-  useUserStore().logOut();
-  location.reload();
-}
+const { toggleSideBar, pureApp } = useNav();
 </script>
 
 <template>
@@ -29,20 +22,8 @@ function loginOut() {
       <DarkMode />
       <!-- 全屏 -->
       <screenfull id="header-screenfull" v-show="!deviceDetection()" />
-      <!-- 退出登陆 -->
-      <el-dropdown trigger="click">
-        <span class="el-dropdown-link">
-          <img v-if="avatars" :src="avatars" :style="avatarsStyle" />
-          <p v-if="username">{{ username }}</p>
-        </span>
-        <template #dropdown>
-          <el-dropdown-menu class="logout">
-            <el-dropdown-item @click="loginOut">
-              <IconifyIconOffline icon="logout-circle-r-line" style="margin: 5px" />退出系统</el-dropdown-item
-            >
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
+      <!-- 设置 -->
+      <setting />
     </div>
   </div>
 </template>
@@ -85,84 +66,10 @@ function loginOut() {
         background: #f6f6f6;
       }
     }
-
-    .globalization {
-      height: 48px;
-      width: 40px;
-      padding: 11px;
-      cursor: pointer;
-
-      &:hover {
-        background: #f6f6f6;
-      }
-    }
-
-    .el-dropdown-link {
-      height: 48px;
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      cursor: pointer;
-      color: #000000d9;
-
-      &:hover {
-        background: #f6f6f6;
-      }
-
-      p {
-        font-size: 14px;
-      }
-
-      img {
-        width: 22px;
-        height: 22px;
-        border-radius: 50%;
-      }
-    }
-
-    .el-icon-setting {
-      height: 48px;
-      width: 38px;
-      padding: 12px;
-      display: flex;
-      cursor: pointer;
-      align-items: center;
-
-      &:hover {
-        background: #f6f6f6;
-      }
-    }
   }
 
   .breadcrumb-container {
     float: left;
-  }
-}
-
-.translation {
-  ::v-deep(.el-dropdown-menu__item) {
-    padding: 5px 40px;
-  }
-
-  .check-zh {
-    position: absolute;
-    left: 20px;
-  }
-
-  .check-en {
-    position: absolute;
-    left: 20px;
-  }
-}
-
-.logout {
-  max-width: 120px;
-
-  ::v-deep(.el-dropdown-menu__item) {
-    min-width: 100%;
-    display: inline-flex;
-    flex-wrap: wrap;
   }
 }
 </style>

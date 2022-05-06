@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, unref, reactive, nextTick, computed, ComputedRef, CSSProperties, onBeforeMount, getCurrentInstance } from "vue";
+import { computed, ComputedRef, CSSProperties, getCurrentInstance, nextTick, onBeforeMount, reactive, ref, unref, watch } from "vue";
 
 import close from "/@/assets/svg/close.svg?component";
 import refresh from "/@/assets/svg/refresh.svg?component";
@@ -7,18 +7,23 @@ import closeAll from "/@/assets/svg/close_all.svg?component";
 import closeLeft from "/@/assets/svg/close_left.svg?component";
 import closeOther from "/@/assets/svg/close_other.svg?component";
 import closeRight from "/@/assets/svg/close_right.svg?component";
+import ArrowLeftSLine from "~icons/ri/arrow-left-s-line";
+import ArrowRightSLine from "~icons/ri/arrow-right-s-line";
+import CloseBold from "~icons/ep/close-bold";
+import RefreshRight from "~icons/ep/refresh-right";
+import ArrowDown from "~icons/ep/arrow-down";
 
 import { emitter } from "/@/utils/mitt";
 import { storageLocal } from "/@/utils/storage";
 import { useRoute, useRouter } from "vue-router";
-import { isEqual, isEmpty } from "lodash-unified";
+import { isEmpty, isEqual } from "lodash-unified";
 import { RouteConfigs, tagsViewsType } from "../../types";
 import { useSettingStoreHook } from "/@/store/modules/settings";
-import { handleAliveRoute, delAliveRoutes } from "/@/router/utils";
+import { delAliveRoutes, handleAliveRoute } from "/@/router/utils";
 import { useMultiTagsStoreHook } from "/@/store/modules/multiTags";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
-import { toggleClass, removeClass, hasClass } from "/@/utils/operate";
-import { templateRef, useResizeObserver, useDebounceFn } from "@vueuse/core";
+import { hasClass, removeClass, toggleClass } from "/@/utils/operate";
+import { templateRef, useDebounceFn, useResizeObserver } from "@vueuse/core";
 
 const route = useRoute();
 const router = useRouter();
@@ -160,35 +165,35 @@ const tagsViews = reactive<Array<tagsViewsType>>([
     icon: close,
     text: "关闭当前标签页",
     divided: false,
-    disabled: multiTags.value.length > 1 ? false : true,
+    disabled: multiTags.value.length <= 1,
     show: true
   },
   {
     icon: closeLeft,
     text: "关闭左侧标签页",
     divided: true,
-    disabled: multiTags.value.length > 1 ? false : true,
+    disabled: multiTags.value.length <= 1,
     show: true
   },
   {
     icon: closeRight,
     text: "关闭右侧标签页",
     divided: false,
-    disabled: multiTags.value.length > 1 ? false : true,
+    disabled: multiTags.value.length <= 1,
     show: true
   },
   {
     icon: closeOther,
     text: "关闭其他标签页",
     divided: true,
-    disabled: multiTags.value.length > 2 ? false : true,
+    disabled: multiTags.value.length <= 2,
     show: true
   },
   {
     icon: closeAll,
     text: "关闭全部标签页",
     divided: false,
-    disabled: multiTags.value.length > 1 ? false : true,
+    disabled: multiTags.value.length <= 1,
     show: true
   }
 ]);
@@ -581,7 +586,7 @@ const getContextMenuStyle = computed((): CSSProperties => {
 <template>
   <div ref="containerDom" class="tags-view" v-if="!showTags">
     <div class="arrow-left">
-      <IconifyIconOffline icon="arrow-left-s-line" @click="handleScroll(200)" />
+      <arrow-left-s-line @click="handleScroll(200)" />
     </div>
     <div ref="scrollbarDom" class="scroll-container">
       <div class="tab" ref="tabDom" :style="getTabStyle">
@@ -601,14 +606,14 @@ const getContextMenuStyle = computed((): CSSProperties => {
             class="el-icon-close"
             @click.stop="deleteMenu(item)"
           >
-            <IconifyIconOffline icon="close-bold" />
+            <close-bold />
           </span>
           <div :ref="'schedule' + index" v-if="showModel !== 'card'" :class="[scheduleIsActive(item)]" />
         </div>
       </div>
     </div>
     <span class="arrow-right">
-      <IconifyIconOffline icon="arrow-right-s-line" @click="handleScroll(-200)" />
+      <arrow-right-s-line @click="handleScroll(-200)" />
     </span>
     <!-- 右键菜单按钮 -->
     <transition name="el-zoom-in-top">
@@ -625,12 +630,12 @@ const getContextMenuStyle = computed((): CSSProperties => {
     <ul class="right-button">
       <li>
         <span title="刷新路由" class="el-icon-refresh-right rotate" @click="onFresh">
-          <IconifyIconOffline icon="refresh-right" />
+          <refresh-right />
         </span>
       </li>
       <li>
         <el-dropdown trigger="click" placement="bottom-end" @command="handleCommand">
-          <IconifyIconOffline icon="arrow-down" />
+          <arrow-down />
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item
