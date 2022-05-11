@@ -3,9 +3,8 @@ import path from "path";
 import { useNav } from "../../hooks/nav";
 import { childrenType } from "../../types";
 import { useAppStoreHook } from "/@/store/modules/app";
-import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
 import { ref, PropType, nextTick, computed, CSSProperties } from "vue";
-import { FontIcon } from "/@/components/ReIcon";
+import Iconfont from "/@/components/Iconfont";
 
 const { pureApp } = useNav();
 const menuMode = ["vertical", "mix"].includes(pureApp.layout);
@@ -137,7 +136,7 @@ function resolvePath(routePath) {
   <template v-if="hasOneShowingChild(props.item.children, props.item) && (!onlyOneChild.children || onlyOneChild.noShowingChildren)">
     <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }" :style="getNoDropdownStyle">
       <div class="sub-menu-icon" v-show="props.item.meta.icon">
-        <component :is="useRenderIcon(onlyOneChild.meta.icon || (props.item.meta && props.item.meta.icon))" />
+        <component :is="onlyOneChild.meta.icon || (props.item.meta && props.item.meta.icon)" />
       </div>
       <div v-if="!pureApp.sidebar.opened && pureApp.layout === 'mix' && props.item?.pathList?.length === 2" :style="getDivStyle">
         <span :style="getMenuTextStyle">
@@ -171,7 +170,7 @@ function resolvePath(routePath) {
   <el-sub-menu v-else ref="subMenu" :index="resolvePath(props.item.path)" popper-append-to-body>
     <template #title>
       <div v-show="props.item.meta.icon" class="sub-menu-icon">
-        <component :is="useRenderIcon(props.item.meta && props.item.meta.icon)" />
+        <component :is="props.item.meta && props.item.meta.icon" />
       </div>
       <span v-if="!menuMode">{{ props.item.meta.title }}</span>
       <el-tooltip v-else placement="top" :offset="-10" :disabled="!pureApp.sidebar.opened || !props.item.showTooltip">
@@ -184,7 +183,7 @@ function resolvePath(routePath) {
           </span>
         </div>
       </el-tooltip>
-      <font-icon
+      <iconfont
         v-if="props.item.meta.extraIcon"
         width="30px"
         height="30px"

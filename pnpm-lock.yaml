@@ -5,12 +5,15 @@ specifiers:
   "@commitlint/config-conventional": 13.1.0
   "@ctrl/tinycolor": ^3.4.1
   "@iconify-json/ant-design": ^1.1.1
+  "@iconify-json/carbon": ^1.1.4
   "@iconify-json/ep": ^1.1.3
   "@iconify-json/ic": ^1.1.3
+  "@iconify-json/line-md": ^1.1.2
+  "@iconify-json/logos": ^1.1.5
+  "@iconify-json/material-symbols": ^1.1.2
   "@iconify-json/mdi": ^1.1.11
   "@iconify-json/ri": ^1.1.1
   "@iconify-json/twemoji": ^1.1.4
-  "@iconify/vue": ^3.2.1
   "@pureadmin/components": ^1.0.6
   "@pureadmin/theme": ^1.1.0
   "@types/element-resize-detector": 1.1.3
@@ -119,12 +122,15 @@ devDependencies:
   "@commitlint/cli": 13.1.0
   "@commitlint/config-conventional": 13.1.0
   "@iconify-json/ant-design": 1.1.1
+  "@iconify-json/carbon": 1.1.4
   "@iconify-json/ep": 1.1.3
   "@iconify-json/ic": 1.1.3
+  "@iconify-json/line-md": 1.1.2
+  "@iconify-json/logos": 1.1.5
+  "@iconify-json/material-symbols": 1.1.2
   "@iconify-json/mdi": 1.1.11
   "@iconify-json/ri": 1.1.1
   "@iconify-json/twemoji": 1.1.4
-  "@iconify/vue": 3.2.1_vue@3.2.33
   "@pureadmin/theme": 1.1.0
   "@types/element-resize-detector": 1.1.3
   "@types/js-cookie": 3.0.2
@@ -722,6 +728,12 @@ packages:
       "@iconify/types": 1.1.0
     dev: true
 
+  /@iconify-json/carbon/1.1.4:
+    resolution: { integrity: sha512-I2Y80wAR+Z3Ut68xiwBfRtw4Lwj7IqeOkCfEnWFC9/dA2ixIJEkCxy8HyNLO3z9RiSF7HZtgI8qGHhyNA2b6EQ== }
+    dependencies:
+      "@iconify/types": 1.1.0
+    dev: true
+
   /@iconify-json/ep/1.1.3:
     resolution: { integrity: sha512-i69QdJo01daSZZ9yIkaCCxpKcxnqZNwLZU+0joNqbD+MzNpQHFVTmBaIvT44oyCpjfy5eSHF1WJ7pV0vT/O+WQ== }
     dependencies:
@@ -730,6 +742,24 @@ packages:
 
   /@iconify-json/ic/1.1.3:
     resolution: { integrity: sha512-oqP1MzBHu9dbRihtDs5MQtbVE81b8jj+csnmWUGNMq9MEv8E2s5Q9QOJtquk9raB/+m8R/JAyzzVrbm3CLC//w== }
+    dependencies:
+      "@iconify/types": 1.1.0
+    dev: true
+
+  /@iconify-json/line-md/1.1.2:
+    resolution: { integrity: sha512-wOdT0/Fmu9Hel8mpYOVo0ZTohzxquQCwYc3ioDh3iwCCOHIeFs22hu3bI0XjOpDz/89M73XsN+bo+M+ZRWXWuw== }
+    dependencies:
+      "@iconify/types": 1.1.0
+    dev: true
+
+  /@iconify-json/logos/1.1.5:
+    resolution: { integrity: sha512-PVBTp7fZ7zNBDdCCqN9IqJt78jO4f8agtiNVwxWfflmEGi3+Fu95Jre0CYAPDalyy862r46DXg8AiCoNENQ3SQ== }
+    dependencies:
+      "@iconify/types": 1.1.0
+    dev: true
+
+  /@iconify-json/material-symbols/1.1.2:
+    resolution: { integrity: sha512-jZJPNbSMsnIUX0+rvIXQaWMrPPfbRk+QxBxE4E15LEwuExGrAEXhNcrkbc2fkQ1zoNll1mKleqKwsOgWXjLlow== }
     dependencies:
       "@iconify/types": 1.1.0
     dev: true
@@ -767,14 +797,6 @@ packages:
       local-pkg: 0.4.1
     transitivePeerDependencies:
       - supports-color
-    dev: true
-
-  /@iconify/vue/3.2.1_vue@3.2.33:
-    resolution: { integrity: sha512-c4R6ZgFo1JrJ8aPMMgOPgfU7lBswihMGR+yWe/P4ZukC3kTkeT4+lkt9Pc/itVFMkwva/S/7u9YofmYv57fnNQ== }
-    peerDependencies:
-      vue: 3.x
-    dependencies:
-      vue: 3.2.33
     dev: true
 
   /@jridgewell/gen-mapping/0.1.1:

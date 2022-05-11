@@ -10,7 +10,7 @@
         @click="handleTo"
         @mouseenter="handleMouse(item)"
       >
-        <component :is="useRenderIcon(item.meta?.icon ?? 'bookmark')" />
+        <component :is="item.meta?.icon ?? 'bookmark'" />
         <span class="result-item-title">{{ item.meta?.title }}</span>
         <enterOutlined />
       </div>
@@ -21,7 +21,6 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import { useEpThemeStoreHook } from "/@/store/modules/epTheme";
-import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
 import EnterOutlined from "~icons/ant-design/enter-outlined";
 
 interface optionsItem {

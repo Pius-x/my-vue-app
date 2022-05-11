@@ -9,8 +9,8 @@ import { useMultiTagsStore } from "/@/store/modules/multiTags";
 import { useSettingStoreHook } from "/@/store/modules/settings";
 
 import BackTop from "~icons/ri/rocket-line";
-import fullScreen from "/@/assets/svg/full_screen.svg?component";
-import exitScreen from "/@/assets/svg/exit_screen.svg?component";
+import MaterialSymbolsFullscreen from "~icons/material-symbols/fullscreen";
+import MaterialSymbolsFullscreenExit from "~icons/material-symbols/fullscreen-exit";
 
 import navbar from "./components/navbar.vue";
 import tag from "./components/tag/index.vue";
@@ -159,7 +159,7 @@ const layoutHeader = defineComponent({
                   "span",
                   { onClick: onFullScreen },
                   {
-                    default: () => [!pureSetting.hiddenSideBar ? h(fullScreen) : h(exitScreen)]
+                    default: () => [!pureSetting.hiddenSideBar ? h(MaterialSymbolsFullscreen) : h(MaterialSymbolsFullscreenExit)]
                   }
                 )
               ]

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useFullscreen } from "@vueuse/core";
-import { FontIcon } from "/@/components/ReIcon";
+import Iconfont from "/@/components/Iconfont";
 
 const { isFullscreen, toggle } = useFullscreen();
 </script>
 
 <template>
   <div class="screen-full" @click="toggle">
-    <font-icon :title="isFullscreen ? '退出全屏' : '全屏'" :icon="isFullscreen ? 'team-iconexit-fullscreen' : 'team-iconfullscreen'" />
+    <iconfont :title="isFullscreen ? '退出全屏' : '全屏'" :icon="isFullscreen ? 'team-iconexit-fullscreen' : 'team-iconfullscreen'" />
   </div>
 </template>
 

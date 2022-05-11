@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getCurEnv } from "/@/utils/func";
-import Avatar from "/@/assets/svg/logo.svg?component";
+import LogosVue from "~icons/logos/vue";
 const props = defineProps({
   collapse: Boolean
 });
@@ -12,11 +12,11 @@ const title = getCurEnv();
   <div class="sidebar-logo-container" :class="{ collapse: props.collapse }">
     <transition name="sidebarLogoFade">
       <router-link v-if="props.collapse" key="props.collapse" :title="title" class="sidebar-logo-link" to="/">
-        <avatar style="margin-top: 5px" />
+        <logos-vue style="width: 35px; height: 35px; margin-top: 5px" />
         <span style="margin-left: 5px" class="sidebar-title">{{ title }}</span>
       </router-link>
       <router-link v-else key="expand" :title="title" class="sidebar-logo-link" to="/">
-        <avatar style="margin-top: 5px" />
+        <logos-vue style="width: 35px; height: 35px; margin-top: 5px" />
         <span style="margin-left: 5px" class="sidebar-title">{{ title }}</span>
       </router-link>
     </transition>

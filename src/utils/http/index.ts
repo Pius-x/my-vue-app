@@ -5,6 +5,8 @@ import NProgress from "../progress";
 import { loadEnv } from "@build/index";
 import { showMessage } from "/@/utils/message";
 import { useUserStore } from "/@/store/modules/user";
+import { ElMessageBox } from "element-plus";
+import { getCurEnv } from "/@/utils/func";
 
 // 加载环境变量 VITE_PROXY_DOMAIN（开发环境）  VITE_PROXY_DOMAIN_REAL（打包后的线上环境）
 const { VITE_PROXY_DOMAIN, VITE_PROXY_DOMAIN_REAL } = loadEnv();
@@ -96,9 +98,10 @@ class PureHttp {
           return $data;
         }
 
-        // 弹出错误码消息
-        if ($data.code !== 0) {
-          showMessage($data.msg, "warning", false);
+        // 弹出错误码消息 异常请求都弹 Post请求弹消息
+        const msgType = $data.code === 0 ? "success" : "warning";
+        if (msgType !== "success" || $config.method === "post") {
+          showMessage($data.msg, msgType);
         }
         return $data;
       },
@@ -133,8 +136,26 @@ class PureHttp {
   }
 
   // 单独抽离的post工具函数
-  public post<T, P>(url: string, data?: T, config?: PureHttpRequestConfig): Promise<P> {
-    return this.request<P>("post", url, { data }, config);
+  public post<T, P>(url: string, data?: T, reconfirm = true, config?: PureHttpRequestConfig): Promise<P> {
+    return new Promise(resolve => {
+      if (!reconfirm) {
+        return resolve(this.request<P>("post", url, { data }, config));
+      }
+
+      ElMessageBox.confirm(`<strong>当前环境为：</strong><strong style="color: red">${getCurEnv()}</strong><br>是否继续操作?`, "系统提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        dangerouslyUseHTMLString: true,
+        center: true
+      })
+        .then(() => {
+          resolve(this.request<P>("post", url, { data }, config));
+        })
+        .catch(() => {
+          showMessage("已取消操作", "warning");
+        });
+    });
   }
 
   // 单独抽离的get工具函数

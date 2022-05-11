@@ -11,8 +11,8 @@ import { storageLocal } from "/@/utils/storage";
 import { createNewStyle, writeNewStyle } from "../../theme/element-plus";
 import { toggleTheme } from "@pureadmin/theme/dist/browser-utils";
 
-import dayIcon from "/@/assets/svg/day.svg?component";
-import darkIcon from "/@/assets/svg/dark.svg?component";
+import MaterialSymbolsDarkMode from "~icons/material-symbols/dark-mode?color=black";
+import MaterialSymbolsWbSunny from "~icons/material-symbols/wb-sunny";
 
 const body = document.documentElement as HTMLElement;
 const instance = getCurrentInstance().appContext.app.config.globalProperties.$storage;
@@ -165,8 +165,8 @@ nextTick(() => {
     v-model="dataTheme"
     inline-prompt
     class="dark-mode"
-    :active-icon="dayIcon"
-    :inactive-icon="darkIcon"
+    :active-icon="MaterialSymbolsWbSunny"
+    :inactive-icon="MaterialSymbolsDarkMode"
     @change="dataThemeChange"
   />
 </template>

@@ -34,7 +34,7 @@ export const useUserStore = defineStore({
     async loginByUsername(data) {
       return new Promise<void>((resolve, reject) => {
         http
-          .post("base/login", data)
+          .post("base/login", data, false)
           .then((data: HttpResponse) => {
             setToken(data.data);
             resolve();

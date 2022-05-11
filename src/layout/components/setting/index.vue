@@ -66,7 +66,7 @@ function updatePwd() {
   http.post("user/changePassword", params).then((data: HttpResponse) => {
     if (data.code === 0) {
       editPwdDialogVisible.value = false;
-      showMessage(`${data.msg} 3秒后退回登录界面，重新登录`, "success");
+      showMessage(`3秒后退回登录界面，重新登录`, "warning");
       setTimeout(loginOut, 3000);
     }
   });
@@ -92,11 +92,9 @@ function updateHeadPic() {
   userInfo.headPic = headPicId;
   storageSession.setItem("user-info", userInfo);
 
-  headPicDialogVisible.value = false;
-
   http.post("user/updateHeadPic", { account: useUserStore().account, headPic: headPicId }).then((data: HttpResponse) => {
     if (data.code === 0) {
-      showMessage("头像更换成功", "success");
+      headPicDialogVisible.value = false;
     }
   });
 }

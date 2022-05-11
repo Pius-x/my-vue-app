@@ -1,4 +1,7 @@
 import { RouteRecordRaw } from "vue-router";
+import EpHomeFilled from "~icons/ep/home-filled";
+import EpLollipop from "~icons/ep/lollipop";
+import { shallowRef } from "vue";
 const Layout = () => import("/@/layout/index.vue");
 
 //可见的路由表（根据用户权限判断最终是否展示）
@@ -9,7 +12,7 @@ const showRouter: Array<RouteRecordRaw> = [
     component: Layout,
     redirect: "/welcome",
     meta: {
-      icon: import("~icons/ep/home-filled"),
+      icon: shallowRef(EpHomeFilled),
       title: "首页",
       rank: 0
     },
@@ -30,7 +33,7 @@ const showRouter: Array<RouteRecordRaw> = [
     redirect: "/permission/page/index",
     meta: {
       title: "权限管理",
-      icon: import("~icons/ep/lollipop"),
+      icon: shallowRef(EpLollipop),
       rank: 7
     },
     children: [
@@ -53,6 +56,36 @@ const showRouter: Array<RouteRecordRaw> = [
 
         meta: {
           title: "按钮权限"
+        }
+      }
+    ]
+  },
+  {
+    path: "/system",
+    name: "system",
+    redirect: "/system/user/index",
+    meta: {
+      title: "权限管理",
+      icon: shallowRef(EpLollipop),
+      rank: 7
+    },
+    children: [
+      {
+        path: "/system/user",
+        name: "systemUser",
+        component: () => import("/@/views/system/user/index.vue"),
+
+        meta: {
+          title: "用户管理"
+        }
+      },
+      {
+        path: "/system/group",
+        name: "systemGroup",
+        component: () => import("/@/views/system/group/index.vue"),
+
+        meta: {
+          title: "分组管理"
         }
       }
     ]

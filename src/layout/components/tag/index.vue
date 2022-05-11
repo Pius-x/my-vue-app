@@ -1,12 +1,24 @@
 <script setup lang="ts">
-import { computed, ComputedRef, CSSProperties, getCurrentInstance, nextTick, onBeforeMount, reactive, ref, unref, watch } from "vue";
+import {
+  computed,
+  ComputedRef,
+  CSSProperties,
+  getCurrentInstance,
+  nextTick,
+  onBeforeMount,
+  reactive,
+  ref,
+  shallowRef,
+  unref,
+  watch
+} from "vue";
 
-import close from "/@/assets/svg/close.svg?component";
-import refresh from "/@/assets/svg/refresh.svg?component";
-import closeAll from "/@/assets/svg/close_all.svg?component";
-import closeLeft from "/@/assets/svg/close_left.svg?component";
-import closeOther from "/@/assets/svg/close_other.svg?component";
-import closeRight from "/@/assets/svg/close_right.svg?component";
+import LineMdClose from "~icons/line-md/close";
+import EpRefresh from "~icons/ep/refresh";
+import LineMdArrowCloseLeft from "~icons/line-md/arrow-close-left";
+import LineMdArrowCloseRight from "~icons/line-md/arrow-close-right";
+import LineMdValignMiddle from "~icons/line-md/valign-middle";
+import LineMdMinus from "~icons/line-md/minus";
 import ArrowLeftSLine from "~icons/ri/arrow-left-s-line";
 import ArrowRightSLine from "~icons/ri/arrow-right-s-line";
 import CloseBold from "~icons/ep/close-bold";
@@ -155,42 +167,42 @@ const handleScroll = (offset: number): void => {
 
 const tagsViews = reactive<Array<tagsViewsType>>([
   {
-    icon: refresh,
+    icon: shallowRef(EpRefresh),
     text: "重新加载",
     divided: false,
     disabled: false,
     show: true
   },
   {
-    icon: close,
+    icon: shallowRef(LineMdClose),
     text: "关闭当前标签页",
     divided: false,
     disabled: multiTags.value.length <= 1,
     show: true
   },
   {
-    icon: closeLeft,
+    icon: shallowRef(LineMdArrowCloseLeft),
     text: "关闭左侧标签页",
     divided: true,
     disabled: multiTags.value.length <= 1,
     show: true
   },
   {
-    icon: closeRight,
+    icon: shallowRef(LineMdArrowCloseRight),
     text: "关闭右侧标签页",
     divided: false,
     disabled: multiTags.value.length <= 1,
     show: true
   },
   {
-    icon: closeOther,
+    icon: shallowRef(LineMdValignMiddle),
     text: "关闭其他标签页",
     divided: true,
     disabled: multiTags.value.length <= 2,
     show: true
   },
   {
-    icon: closeAll,
+    icon: shallowRef(LineMdMinus),
     text: "关闭全部标签页",
     divided: false,
     disabled: multiTags.value.length <= 1,

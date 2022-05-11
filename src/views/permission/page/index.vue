@@ -5,8 +5,6 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
-
 let purview = "";
 
 function changRole() {}
@@ -23,6 +21,6 @@ function changRole() {}
         >
       </div>
     </template>
-    <el-button type="primary" @click="changRole" :icon="useRenderIcon('user', { color: '#fff' })">切换角色</el-button>
+    <el-button type="primary" @click="changRole">切换角色</el-button>
   </el-card>
 </template>

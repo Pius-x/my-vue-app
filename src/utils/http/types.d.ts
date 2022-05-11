@@ -5,7 +5,7 @@ export type resultType = {
 };
 export interface HttpResponse extends Promise<any> {
   code: number; //错误码
-  data?: object | any[]; //返回的数据
+  data?: any; //返回的数据
   msg?: string; //附带信息
 }
 

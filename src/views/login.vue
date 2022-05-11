@@ -4,7 +4,7 @@ import { useRouter } from "vue-router";
 import { initRouter } from "/@/router/utils";
 import { addClass, removeClass } from "/@/utils/operate";
 import bg from "/@/assets/login/bg.png";
-import Avatar from "/@/assets/login/avatar.svg?component";
+import LogosVue from "~icons/logos/vue";
 import Illustration from "/@/assets/login/illustration.svg?component";
 import { useUserStoreHook } from "/@/store/modules/user";
 import { isEmpty } from "/@/utils/is";
@@ -59,14 +59,14 @@ function onPwdBlur() {
 </script>
 
 <template>
-  <img :src="bg" class="wave" />
+  <el-image :src="bg" class="wave" />
   <div class="login-container">
     <div class="img">
       <illustration />
     </div>
     <div class="login-box">
       <div class="login-form">
-        <avatar class="avatar" />
+        <logos-vue class="avatar" />
         <h2
           v-motion
           :initial="{
