@@ -414,7 +414,7 @@ const editAuthority = row => {
   dialogFormVisible.value = true;
 };
 
-const tableRowClassName = ({ row, rowIndex }) => {
+const tableRowClassName = ({ row }) => {
   if (!isEmpty(row.children)) {
     return "warning-row";
   } else {
