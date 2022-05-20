@@ -81,18 +81,20 @@ const submitForm = () => {
 };
 
 function updateHeadPic() {
-  //实时改变头像
   const headPicId = Number(selectedId.value);
-  headPic.value = headPicId;
-  useUserStore().headPic = headPicId;
-
-  const userInfo = storageSession.getItem("user-info");
-  userInfo.headPic = headPicId;
-  storageSession.setItem("user-info", userInfo);
 
   http.post("user/updateHeadPic", { account: useUserStore().account, headPic: headPicId }).then((data: HttpResponse) => {
     if (data.code === 0) {
+      //实时改变头像
+      headPic.value = headPicId;
+
       headPicDialogVisible.value = false;
+
+      useUserStore().headPic = headPicId;
+
+      const userInfo = storageSession.getItem("user-info");
+      userInfo.headPic = headPicId;
+      storageSession.setItem("user-info", userInfo);
     }
   });
 }
