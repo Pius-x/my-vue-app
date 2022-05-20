@@ -32,11 +32,11 @@ export function getPluginsList(command, VITE_LEGACY) {
         /\.md$/ // .md
       ],
       eslintrc: {
-        enabled: false, // Default `false`
+        enabled: false, // Default `true`
         filepath: "./.eslintrc-auto-import.json", // Default `./.eslintrc-auto-import.json`
         globalsPropValue: true // Default `true`, (true | false | 'readonly' | 'readable' | 'writable' | 'writeable')
       },
-      dts: "./auto-imports.d.ts"
+      dts: false // Default ./auto-imports.d.ts
     }),
     Icons({ compiler: "vue3", autoInstall: true }),
     // jsx、tsx语法支持
