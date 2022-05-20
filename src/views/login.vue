@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { initRouter } from "/@/router/utils";
 import bg from "/@/assets/login/bg.png";

@@ -5,7 +5,6 @@
 </template>
 <script lang="ts" setup>
 import { useRoute } from "vue-router";
-import { ref, unref, onMounted, nextTick } from "vue";
 
 const loading = ref(false);
 const currentRoute = useRoute();

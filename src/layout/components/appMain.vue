@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { h, ref, computed, Transition, defineComponent, getCurrentInstance } from "vue";
+import { Transition } from "vue";
 import BackTop from "~icons/ri/rocket-line";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
 

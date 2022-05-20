@@ -1,17 +1,5 @@
 <script setup lang="ts">
-import {
-  computed,
-  ComputedRef,
-  CSSProperties,
-  getCurrentInstance,
-  nextTick,
-  onBeforeMount,
-  reactive,
-  ref,
-  shallowRef,
-  unref,
-  watch
-} from "vue";
+import { ComputedRef, CSSProperties } from "vue";
 
 import LineMdClose from "~icons/line-md/close";
 import EpRefresh from "~icons/ep/refresh";

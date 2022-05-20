@@ -5,7 +5,6 @@ import { useNav } from "../../hooks/nav";
 import SidebarItem from "./sidebarItem.vue";
 import { storageLocal } from "/@/utils/storage";
 import { useRoute, useRouter } from "vue-router";
-import { ref, computed, watch, onBeforeMount } from "vue";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
 
 const route = useRoute();

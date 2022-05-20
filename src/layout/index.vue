@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { h, reactive, computed, onMounted, defineComponent, getCurrentInstance } from "vue";
 import { setType } from "./types";
 import { routerArrays } from "./types";
 import { emitter } from "/@/utils/mitt";

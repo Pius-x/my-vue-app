@@ -4,7 +4,6 @@ import { userType } from "./types";
 import { router } from "/@/router";
 import { storageLocal, storageSession } from "/@/utils/storage";
 import { setToken, removeToken } from "/@/utils/auth";
-import { http } from "/@/utils/http";
 import { HttpResponse } from "/@/utils/http/types";
 
 export const useUserStore = defineStore({

@@ -4,7 +4,6 @@ import SearchResult from "./SearchResult.vue";
 import SearchFooter from "./SearchFooter.vue";
 import EpSearch from "~icons/ep/search";
 import { useDebounceFn, onKeyStroke } from "@vueuse/core";
-import { ref, watch, computed, nextTick, shallowRef } from "vue";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
 
 interface Props {

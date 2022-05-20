@@ -16,8 +16,6 @@ export default {
 };
 </script>
 <script lang="ts" setup>
-import { computed, ref } from "vue";
-
 const props = defineProps({
   modelValue: { type: Object, required: true },
   total: { type: Number, required: true },

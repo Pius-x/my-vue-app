@@ -19,7 +19,6 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
 import EpMenu from "~icons/ep/menu";
 import { useEpThemeStoreHook } from "/@/store/modules/epTheme";
 import EnterOutlined from "~icons/ant-design/enter-outlined";

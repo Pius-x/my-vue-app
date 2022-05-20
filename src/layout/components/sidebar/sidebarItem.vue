@@ -3,7 +3,7 @@ import path from "path";
 import { useNav } from "../../hooks/nav";
 import { childrenType } from "../../types";
 import { useAppStoreHook } from "/@/store/modules/app";
-import { ref, PropType, nextTick, computed, CSSProperties } from "vue";
+import { PropType, CSSProperties } from "vue";
 import Iconfont from "/@/components/Iconfont";
 
 const { pureApp } = useNav();

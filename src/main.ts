@@ -3,7 +3,7 @@ import router from "./router";
 import { setupStore } from "/@/store";
 import ElementPlus from "element-plus";
 import { getServerConfig } from "./config";
-import { createApp, Directive } from "vue";
+import { Directive } from "vue";
 import { MotionPlugin } from "@vueuse/motion";
 import { injectResponsiveStorage } from "/@/utils/storage/responsive";
 

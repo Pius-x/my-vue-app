@@ -1,4 +1,3 @@
-import { computed } from "vue";
 import { router } from "/@/router";
 import { emitter } from "/@/utils/mitt";
 import { remainingPaths } from "/@/router";

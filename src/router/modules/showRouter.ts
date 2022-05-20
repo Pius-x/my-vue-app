@@ -3,7 +3,6 @@ import EpHomeFilled from "~icons/ep/home-filled";
 import MaterialSymbolsPerson from "~icons/material-symbols/person";
 import MaterialSymbolsGroup from "~icons/material-symbols/group";
 import EpLollipop from "~icons/ep/lollipop";
-import { shallowRef } from "vue";
 const Layout = () => import("/@/layout/index.vue");
 
 //可见的路由表（根据用户权限判断最终是否展示）

@@ -9,12 +9,35 @@ import { visualizer } from "rollup-plugin-visualizer";
 import removeConsole from "vite-plugin-remove-console";
 import themePreprocessorPlugin from "@pureadmin/theme";
 import Icons from "unplugin-icons/vite";
+import vueSetupExtend from "vite-plugin-vue-setup-extend";
+import AutoImport from "unplugin-auto-import/vite";
 import { genScssMultipleScopeVars } from "/@/layout/theme";
 
 export function getPluginsList(command, VITE_LEGACY) {
   const lifecycle = process.env.npm_lifecycle_event;
   return [
     vue(),
+    vueSetupExtend(),
+    AutoImport({
+      imports: [
+        "vue",
+        {
+          "/@/utils/http": ["http"]
+        }
+      ],
+      include: [
+        /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
+        /\.vue$/,
+        /\.vue\?vue/, // .vue
+        /\.md$/ // .md
+      ],
+      eslintrc: {
+        enabled: true, // Default `false`
+        filepath: "./.eslintrc-auto-import.json", // Default `./.eslintrc-auto-import.json`
+        globalsPropValue: true // Default `true`, (true | false | 'readonly' | 'readable' | 'writable' | 'writeable')
+      },
+      dts: "./auto-imports.d.ts"
+    }),
     Icons({ compiler: "vue3", autoInstall: true }),
     // jsx、tsx语法支持
     vueJsx(),
