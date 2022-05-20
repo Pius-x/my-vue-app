@@ -35,7 +35,7 @@ export function setToken(data) {
     // userInfo.expiresAt = new Date().getTime() + 5000;
     userInfo.headPic = userInfo.head_pic;
     userInfo.token = accessToken;
-    userInfo.routerList = JSON.parse(userInfo.router_list);
+    userInfo.routerList = userInfo.router_list;
 
     delete userInfo.head_pic;
     delete userInfo.router_list;

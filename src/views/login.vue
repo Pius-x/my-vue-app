@@ -2,7 +2,6 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { initRouter } from "/@/router/utils";
-import { addClass, removeClass } from "/@/utils/operate";
 import bg from "/@/assets/login/bg.png";
 import LogosVue from "~icons/logos/vue";
 import Illustration from "/@/assets/login/illustration.svg?component";
@@ -41,20 +40,23 @@ const onLogin = (): void => {
     });
 };
 
-function onUserFocus() {
-  addClass(document.querySelector(".user"), "focus");
-}
-
-function onUserBlur() {
-  if (user.value.length === 0) removeClass(document.querySelector(".user"), "focus");
-}
+const pwdColor = ref("color: #999"); //#999
+const userColor = ref("color: #999"); //#999
 
 function onPwdFocus() {
-  addClass(document.querySelector(".pwd"), "focus");
+  pwdColor.value = "color: #5392f0";
 }
 
 function onPwdBlur() {
-  if (pwd.value.length === 0) removeClass(document.querySelector(".pwd"), "focus");
+  pwdColor.value = "color: #999";
+}
+
+function onUserFocus() {
+  userColor.value = "color: #5392f0";
+}
+
+function onUserBlur() {
+  userColor.value = "color: #999";
 }
 </script>
 
@@ -67,91 +69,41 @@ function onPwdBlur() {
     <div class="login-box">
       <div class="login-form">
         <logos-vue class="avatar" />
-        <h2
-          v-motion
-          :initial="{
-            opacity: 0,
-            y: 100
-          }"
-          :enter="{
-            opacity: 1,
-            y: 0,
-            transition: {
-              delay: 100
-            }
-          }"
+        <h2>Super Fox GM</h2>
+        <el-input
+          @focus="onUserFocus"
+          @blur="onUserBlur"
+          v-model="user"
+          size="large"
+          class="input_login w-50 m-2"
+          placeholder="输入账户名或者手机号码"
         >
-          Super Fox GM
-        </h2>
-        <div
-          class="input-group user focus"
-          v-motion
-          :initial="{
-            opacity: 0,
-            y: 100
-          }"
-          :enter="{
-            opacity: 1,
-            y: 0,
-            transition: {
-              delay: 200
-            }
-          }"
+          <template #prefix>
+            <ri-user :style="userColor" />
+          </template>
+        </el-input>
+        <el-input
+          @focus="onPwdFocus"
+          @blur="onPwdBlur"
+          type="password"
+          show-password
+          v-model="pwd"
+          size="large"
+          class="input_login w-4 m-2"
+          placeholder="输入密码"
+          @keydown.enter="onLogin"
         >
-          <div class="icon">
-            <ri-user style="height: 14px; width: 14px" />
-          </div>
-          <div>
-            <h5>用户名</h5>
-            <input type="text" class="input" v-model="user" @focus="onUserFocus" @blur="onUserBlur" />
-          </div>
-        </div>
-        <div
-          class="input-group pwd focus"
-          v-motion
-          :initial="{
-            opacity: 0,
-            y: 100
-          }"
-          :enter="{
-            opacity: 1,
-            y: 0,
-            transition: {
-              delay: 300
-            }
-          }"
-        >
-          <div class="icon">
-            <ri-lock style="width: 14px; height: 14px" />
-          </div>
-          <div>
-            <h5>密码</h5>
-            <input type="password" class="input" v-model="pwd" @focus="onPwdFocus" @blur="onPwdBlur" @keydown.enter="onLogin" />
-          </div>
-        </div>
-        <button
-          class="btn"
-          v-motion
-          :initial="{
-            opacity: 0,
-            y: 10
-          }"
-          :enter="{
-            opacity: 1,
-            y: 0,
-            transition: {
-              delay: 400
-            }
-          }"
-          @click="onLogin"
-        >
-          登录
-        </button>
+          <template #prefix>
+            <ri-lock :style="pwdColor" />
+          </template>
+        </el-input>
+
+        <el-button class="btn" @click="onLogin">登录</el-button>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-@import url("/@/style/login.css");
+@import url("../style/login.css");
 </style>

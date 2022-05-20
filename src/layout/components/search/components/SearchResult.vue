@@ -1,6 +1,6 @@
 <template>
   <div class="result">
-    <template v-for="item in options" :key="item.path">
+    <template v-for="item in props.options" :key="item.path">
       <div
         class="result-item"
         :style="{
@@ -10,7 +10,7 @@
         @click="handleTo"
         @mouseenter="handleMouse(item)"
       >
-        <component :is="item.meta?.icon ?? 'bookmark'" />
+        <component :is="item.meta?.icon ?? EpMenu" />
         <span class="result-item-title">{{ item.meta?.title }}</span>
         <enterOutlined />
       </div>
@@ -20,6 +20,7 @@
 
 <script lang="ts" setup>
 import { computed } from "vue";
+import EpMenu from "~icons/ep/menu";
 import { useEpThemeStoreHook } from "/@/store/modules/epTheme";
 import EnterOutlined from "~icons/ant-design/enter-outlined";
 
@@ -43,7 +44,6 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {});
 const emit = defineEmits<Emits>();
-
 const active = computed({
   get() {
     return props.value;

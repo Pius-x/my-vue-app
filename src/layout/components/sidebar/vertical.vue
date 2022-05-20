@@ -6,30 +6,17 @@ import SidebarItem from "./sidebarItem.vue";
 import { storageLocal } from "/@/utils/storage";
 import { useRoute, useRouter } from "vue-router";
 import { ref, computed, watch, onBeforeMount } from "vue";
-import { findRouteByPath, getParentPaths } from "/@/router/utils";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
 
 const route = useRoute();
 const routers = useRouter().options.routes;
 const showLogo = ref(storageLocal.getItem("responsive-configure")?.showLogo ?? true);
 
-const { pureApp, isCollapse, menuSelect } = useNav();
-
-let subMenuData = ref([]);
+const { isCollapse, menuSelect } = useNav();
 
 const menuData = computed(() => {
-  return pureApp.layout === "mix" ? subMenuData.value : usePermissionStoreHook().wholeMenus;
+  return usePermissionStoreHook().wholeMenus;
 });
-
-function getSubMenuData(path) {
-  // path的上级路由组成的数组
-  const parentPathArr = getParentPaths(path, usePermissionStoreHook().wholeMenus);
-  // 当前路由的父级路由信息
-  const parenetRoute = findRouteByPath(parentPathArr[0] || path, usePermissionStoreHook().wholeMenus);
-  if (!parenetRoute?.children) return;
-  subMenuData.value = parenetRoute?.children;
-}
-getSubMenuData(route.path);
 
 onBeforeMount(() => {
   emitter.on("logoChange", key => {
@@ -40,7 +27,6 @@ onBeforeMount(() => {
 watch(
   () => route.path,
   () => {
-    getSubMenuData(route.path);
     menuSelect(route.path, routers);
   }
 );

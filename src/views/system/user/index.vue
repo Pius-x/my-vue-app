@@ -5,11 +5,15 @@
         <el-button :icon="EpPlus" type="primary" @click="addUser"> 新增用户 </el-button>
       </el-row>
 
-      <el-table border :data="dataList" :header-cell-style="{ background: '#fafafa', color: '#606266' }">
+      <el-table stripe border :data="dataList" :header-cell-style="{ background: '#f4f4f5', color: '#606266' }">
         <el-table-column label="用户ID" align="center" prop="id" width="120" />
         <el-table-column label="账号名" align="center" prop="account" />
         <el-table-column label="用户昵称" align="center" prop="name" />
-        <el-table-column label="分组" align="center" prop="gid" />
+        <el-table-column label="所属分组" align="center" prop="gid" :filters="GroupFilterArr" :filter-method="filterGroup">
+          <template #default="{ row }">
+            <el-tag>{{ GroupMap.get(row.gid) }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="手机号码" align="center" prop="mobile" />
         <el-table-column label="创建时间" align="center" width="180" prop="create_time" />
         <el-table-column label="创建人" align="center" prop="create_by" />
@@ -24,16 +28,22 @@
             />
           </template>
           <template #default="scope">
-            <el-button class="reset-margin" type="text" @click="editUser(scope.row)" :icon="EpEditPen"> 修改 </el-button>
+            <el-link type="primary" @click="editUser(scope.row)" :icon="EpEditPen">
+              <span class="icon-link-margin">修改</span>
+            </el-link>
             <el-popconfirm title="是否确认删除用户?" @confirm="handleDelete(scope.row)">
               <template #reference>
-                <el-button class="reset-margin" type="text" :icon="EpDelete"> 删除 </el-button>
+                <el-link class="operate-margin" type="primary" :icon="EpDelete">
+                  <span class="icon-link-margin">删除</span>
+                </el-link>
               </template>
             </el-popconfirm>
 
             <el-popconfirm title="是否确认重置密码?" @confirm="handleRestPwd(scope.row)">
               <template #reference>
-                <el-button class="reset-margin" type="text" :icon="EpLock"> 重置密码 </el-button>
+                <el-link class="operate-margin" type="primary" :icon="EpUnlock">
+                  <span class="icon-link-margin">重置密码</span>
+                </el-link>
               </template>
             </el-popconfirm>
           </template>
@@ -57,7 +67,14 @@
           <el-input v-model="userInfoForm.name" />
         </el-form-item>
         <el-form-item label="分组" prop="gid">
-          <el-input-number v-model="userInfoForm.gid" controls-position="right" />
+          <el-cascader
+            v-model.number="userInfoForm.gid"
+            style="width: 100%"
+            :options="AuthorityOption"
+            :props="{ checkStrictly: true, label: 'gname', value: 'gid', disabled: 'disabled', emitPath: false }"
+            :show-all-levels="false"
+            filterable
+          />
         </el-form-item>
         <el-form-item label="手机号码" prop="mobile">
           <el-input v-model="userInfoForm.mobile" />
@@ -83,16 +100,17 @@ export default {
 </script>
 
 <script setup lang="ts">
-import EpLock from "~icons/ep/lock";
+import EpUnlock from "~icons/ep/unlock";
 import EpDelete from "~icons/ep/delete";
 import EpEditPen from "~icons/ep/edit-pen";
 import EpLoading from "~icons/ep/loading";
 import EpSearch from "~icons/ep/search";
 import EpPlus from "~icons/ep/plus";
-import { ref, onMounted, reactive, watch } from "vue";
+import { ref, onMounted, reactive, watch, Ref } from "vue";
 import { http } from "/@/utils/http";
 import { HttpResponse } from "/@/utils/http/types";
 import AntPagination from "/@/components/AntPagination/index.vue";
+import { useUserStore } from "/@/store/modules/user";
 
 let searchCondition = ref("");
 let userInfoDialogVisible = ref(false);
@@ -189,22 +207,77 @@ function handleRestPwd(row) {
 
 function getUserList() {
   const { currentPage: page, pageSize } = pagination.value;
-  return http.get("user/getUserList", { page, pageSize, keyword: searchCondition.value }).then((data: HttpResponse) => {
+  return http
+    .get("user/getUserList", { page, pageSize, gid: useUserStore().gid, keyword: searchCondition.value })
+    .then((data: HttpResponse) => {
+      if (data.code === 0) {
+        const { list, total: totalNum } = data.data;
+        dataList.value = list;
+        total.value = totalNum;
+      }
+    });
+}
+
+const filterGroup = (value: string, row) => {
+  return row.gid === value;
+};
+
+const GroupMap: Ref<Map<number, string>> = ref(new Map([[0, "根分组"]]));
+const GroupFilterArr: Ref<{ text: string; value: number }[]> = ref([]);
+const AuthorityOption = ref([]);
+
+const setOptions = async () => {
+  await http.get("/authority/getAuthorityList", { gid: useUserStore().gid }).then((data: HttpResponse) => {
     if (data.code === 0) {
-      const { list, total: totalNum } = data.data;
-      dataList.value = list;
-      total.value = totalNum;
+      const { list } = data.data;
+      if (useUserStore().gid === 0) {
+        AuthorityOption.value.push({ gid: 0, gname: "根分组" });
+      }
+      setAuthorityOptions(list, AuthorityOption.value);
     }
   });
-}
+};
+const setAuthorityOptions = (AuthorityData, optionsData) => {
+  AuthorityData &&
+    AuthorityData.forEach(item => {
+      if (item.children && item.children.length) {
+        const option = {
+          gid: item.gid,
+          gname: item.gname,
+          children: []
+        };
+        setAuthorityOptions(item.children, option.children);
+        optionsData.push(option);
+        GroupFilterArr.value.push({ text: item.gname, value: item.gid });
+        GroupMap.value.set(item.gid, item.gname);
+      } else {
+        const option = {
+          gid: item.gid,
+          gname: item.gname
+        };
+        optionsData.push(option);
+        GroupFilterArr.value.push({ text: item.gname, value: item.gid });
+        GroupMap.value.set(item.gid, item.gname);
+      }
+    });
+};
 
 onMounted(() => {
   getUserList();
+  setOptions();
 });
 </script>
 
 <style scoped lang="scss">
 :deep(.el-dropdown-menu__item i) {
   margin: 0;
+}
+
+.operate-margin {
+  margin-left: 10px;
+}
+
+.icon-link-margin {
+  margin-left: 4px;
 }
 </style>

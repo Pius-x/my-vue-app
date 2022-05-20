@@ -112,7 +112,6 @@ function setLayoutThemeColor(theme: string) {
   };
 
   if (theme === "default" || theme === "light") {
-    console.log(getConfig().EpThemeColor);
     setEpThemeColor(getConfig().EpThemeColor);
   } else {
     const colors = find(themeColors.value, { themeColor: theme });

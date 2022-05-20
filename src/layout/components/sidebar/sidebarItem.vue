@@ -22,7 +22,6 @@ const props = defineProps({
     default: ""
   }
 });
-
 const getExtraIconStyle = computed((): CSSProperties => {
   if (useAppStoreHook().getSidebarStatus) {
     return {
@@ -154,7 +153,7 @@ function resolvePath(routePath) {
               {{ onlyOneChild.meta.title }}
             </span>
           </el-tooltip>
-          <font-icon
+          <iconfont
             v-if="onlyOneChild.meta.extraIcon"
             width="30px"
             height="30px"

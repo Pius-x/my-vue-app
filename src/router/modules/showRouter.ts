@@ -1,5 +1,7 @@
 import { RouteRecordRaw } from "vue-router";
 import EpHomeFilled from "~icons/ep/home-filled";
+import MaterialSymbolsPerson from "~icons/material-symbols/person";
+import MaterialSymbolsGroup from "~icons/material-symbols/group";
 import EpLollipop from "~icons/ep/lollipop";
 import { shallowRef } from "vue";
 const Layout = () => import("/@/layout/index.vue");
@@ -13,7 +15,7 @@ const showRouter: Array<RouteRecordRaw> = [
     redirect: "/welcome",
     meta: {
       icon: shallowRef(EpHomeFilled),
-      title: "首页",
+      title: "HOME",
       rank: 0
     },
     children: [
@@ -22,6 +24,7 @@ const showRouter: Array<RouteRecordRaw> = [
         name: "welcome",
         component: () => import("/@/views/welcome.vue"),
         meta: {
+          icon: shallowRef(EpHomeFilled),
           title: "首页"
         }
       }
@@ -42,6 +45,7 @@ const showRouter: Array<RouteRecordRaw> = [
         component: () => import("/@/views/permission/page/index.vue"),
         name: "permissionPage",
         meta: {
+          icon: shallowRef(EpHomeFilled),
           title: "页面权限",
           extraIcon: {
             svg: true,
@@ -76,6 +80,7 @@ const showRouter: Array<RouteRecordRaw> = [
         component: () => import("/@/views/system/user/index.vue"),
 
         meta: {
+          icon: shallowRef(MaterialSymbolsPerson),
           title: "用户管理"
         }
       },
@@ -85,6 +90,7 @@ const showRouter: Array<RouteRecordRaw> = [
         component: () => import("/@/views/system/group/index.vue"),
 
         meta: {
+          icon: shallowRef(MaterialSymbolsGroup),
           title: "分组管理"
         }
       }

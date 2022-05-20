@@ -3,7 +3,6 @@ import { useRouter } from "vue-router";
 import SearchResult from "./SearchResult.vue";
 import SearchFooter from "./SearchFooter.vue";
 import EpSearch from "~icons/ep/search";
-import { deleteChildren } from "/@/utils/tree";
 import { useDebounceFn, onKeyStroke } from "@vueuse/core";
 import { ref, watch, computed, nextTick, shallowRef } from "vue";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
@@ -26,11 +25,7 @@ const activePath = ref("");
 const inputRef = ref<HTMLInputElement | null>(null);
 const resultOptions = shallowRef([]);
 const handleSearch = useDebounceFn(search, 300);
-
-/** 菜单树形结构 */
-const menusData = computed(() => {
-  return deleteChildren(usePermissionStoreHook().menusTree);
-});
+const flatMenusData = flatTree(usePermissionStoreHook().wholeMenus);
 
 const show = computed({
   get() {
@@ -54,8 +49,11 @@ function flatTree(arr) {
   const res = [];
   function deep(arr) {
     arr.forEach(item => {
-      res.push(item);
-      item.children && deep(item.children);
+      if (item.children) {
+        deep(item.children);
+      } else {
+        res.push(item);
+      }
     });
   }
   deep(arr);
@@ -64,7 +62,6 @@ function flatTree(arr) {
 
 /** 查询 */
 function search() {
-  const flatMenusData = flatTree(menusData.value);
   resultOptions.value = flatMenusData.filter(
     menu => keyword.value && menu.meta?.title.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase().trim())
   );

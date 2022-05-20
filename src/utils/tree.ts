@@ -22,9 +22,8 @@ export function extractPathList(menuTree) {
 
 /**
  * 如果父级下children的length为1，删除children并自动组建唯一uniqueId
- * @param {Array} {menuTree 菜单树}
- * @param {Array} {pathList 每一项的id组成的数组}
- * @param {return}}
+ * @param menuTree
+ * @param pathList
  */
 export function deleteChildren(menuTree, pathList = []) {
   if (!Array.isArray(menuTree)) {

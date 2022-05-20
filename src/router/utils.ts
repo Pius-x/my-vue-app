@@ -90,12 +90,11 @@ function findRouteByPath(path: string, routes: RouteRecordRaw[]) {
 
 //有权限的动态路由表
 function dynamicRouter(): string[] {
-  const routerList = useUserStore().routerList;
-  const allShowRouter = showRouter;
+  const { routerList, gid } = useUserStore();
 
   let routers: string[];
-  if (routerList.length === 1 && routerList[0].path === "/") {
-    routers = formatFlatteningRoutes(allShowRouter).map(v => {
+  if (gid === 0) {
+    routers = formatFlatteningRoutes(showRouter).map(v => {
       return v.path;
     });
   } else {
@@ -104,7 +103,7 @@ function dynamicRouter(): string[] {
     });
   }
 
-  return routers.concat(remainingPaths, ["/", "/welcome"]);
+  return routers.concat(remainingPaths);
 }
 
 // 过滤无权限路由
