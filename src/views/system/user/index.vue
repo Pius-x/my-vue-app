@@ -226,7 +226,7 @@ const GroupFilterArr: Ref<{ text: string; value: number }[]> = ref([]);
 const AuthorityOption = ref([]);
 
 const setOptions = async () => {
-  await http.get("/authority/getAuthorityList", { gid: useUserStore().gid }).then((data: HttpResponse) => {
+  await http.get("group/getGroupList", { gid: useUserStore().gid }).then((data: HttpResponse) => {
     if (data.code === 0) {
       const { list } = data.data;
       if (useUserStore().gid === 0) {

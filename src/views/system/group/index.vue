@@ -141,7 +141,6 @@ import EpPlus from "~icons/ep/plus";
 import EpEdit from "~icons/ep/edit";
 import EpDelete from "~icons/ep/delete";
 
-import { isEmpty, isUnDef } from "/@/utils/is";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { HttpResponse } from "/@/utils/http/types";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
@@ -172,12 +171,10 @@ const relation = async () => {
     routerList.push({ path: item, readonly: readonlyMap.value?.[item] ?? 0 });
   });
 
-  await http
-    .post("/authority/updateGroupRouterList", { router_list: routerList, gid: curGid.value, parent_gid: curParentGid.value })
-    .then(() => {
-      drawerRouter.value = false;
-      getTableData();
-    });
+  await http.post("group/updateGroupRouter", { router_list: routerList, gid: curGid.value, parent_gid: curParentGid.value }).then(() => {
+    drawerRouter.value = false;
+    getTableData();
+  });
 };
 
 const multiUpdateUserGid = async () => {
@@ -242,13 +239,18 @@ const rules = ref({
 });
 
 const tableData = ref([]);
+const parentGidList = ref([]);
 
 // 查询
 const getTableData = async () => {
-  await http.get("/authority/getAuthorityList", { gid: useUserStore().gid }).then((data: HttpResponse) => {
+  await http.get("group/getGroupList", { gid: useUserStore().gid }).then((data: HttpResponse) => {
     if (data.code === 0) {
       const { list } = data.data;
       tableData.value = list;
+
+      for (const listElement of list) {
+        parentGidList.value.push(listElement.gid);
+      }
     }
   });
 };
@@ -294,7 +296,7 @@ const deleteAuth = row => {
     type: "warning"
   })
     .then(async () => {
-      await http.post("/authority/deleteAuthority", { gid: row.gid }, false).then((data: HttpResponse) => {
+      await http.post("group/deleteGroup", { gid: row.gid }, false).then((data: HttpResponse) => {
         if (data.code === 0) {
           getTableData();
         }
@@ -336,7 +338,7 @@ const enterDialog = () => {
       switch (dialogType.value) {
         case "add":
           {
-            await http.post("/authority/createAuthority", form.value).then((data: HttpResponse) => {
+            await http.post("group/createGroup", form.value).then((data: HttpResponse) => {
               if (data.code === 0) {
                 getTableData();
                 closeDialog();
@@ -346,7 +348,7 @@ const enterDialog = () => {
           break;
         case "edit":
           {
-            await http.post("/authority/updateAuthority", form.value).then((data: HttpResponse) => {
+            await http.post("group/updateGroup", form.value).then((data: HttpResponse) => {
               if (data.code === 0) {
                 getTableData();
                 closeDialog();
@@ -415,11 +417,14 @@ const editAuthority = row => {
 };
 
 const tableRowClassName = ({ row }) => {
-  if (!isEmpty(row.children)) {
-    return "warning-row";
-  } else {
-    return "";
+  if (row.parent_gid === 0) {
+    return "layer-row-1";
   }
+  if (parentGidList.value.includes(row.parent_gid)) {
+    return "layer-row-2";
+  }
+
+  return "";
 };
 </script>
 
@@ -447,11 +452,11 @@ export default {
   }
 }
 
-.el-table .warning-row {
-  --el-table-tr-bg-color: var(--el-color-success-light-9);
+.el-table .layer-row-1 {
+  --el-table-tr-bg-color: var(--el-color-success-light-7);
 }
 
-.el-table .success-row {
+.el-table .layer-row-2 {
   --el-table-tr-bg-color: var(--el-color-success-light-9);
 }
 </style>
