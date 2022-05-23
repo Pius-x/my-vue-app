@@ -7,6 +7,7 @@ import { showMessage } from "/@/utils/message";
 import { useUserStore } from "/@/store/modules/user";
 import { ElMessageBox } from "element-plus";
 import { getCurEnv } from "/@/utils/func";
+import { hasPermissions } from "/@/router/utils";
 
 // 加载环境变量 VITE_PROXY_DOMAIN（开发环境）  VITE_PROXY_DOMAIN_REAL（打包后的线上环境）
 const { VITE_PROXY_DOMAIN, VITE_PROXY_DOMAIN_REAL } = loadEnv();
@@ -61,11 +62,10 @@ class PureHttp {
           const now = new Date().getTime();
           const expired = parseInt(userInfo.expiresAt) - now <= 0;
           if (expired) {
-            useUserStore().logOut();
+            useUserStore().clearTokenCache();
           } else {
-            config.headers["Authorization"] = "Bearer " + userInfo.token;
-            config.headers["x-token"] = userInfo.token;
-            config.headers["x-account"] = userInfo.account;
+            config.headers["X-token"] = userInfo.token;
+            config.headers["X-account"] = userInfo.account;
           }
         }
 
@@ -111,7 +111,7 @@ class PureHttp {
         $error.isCancelRequest = Axios.isCancel($error);
         // 关闭进度条动画
         NProgress.done();
-        showMessage(`${$error.name}：${$error.message}`, "error", false);
+        showMessage(`${$error.name}：${$error.message}`, "error");
         // 所有的响应异常 区分来源为取消请求/非取消请求
         return Promise.reject($error);
       }
@@ -138,6 +138,11 @@ class PureHttp {
   // 单独抽离的post工具函数
   public post<T, P>(url: string, data?: T, reconfirm = true, config?: PureHttpRequestConfig): Promise<P> {
     return new Promise(resolve => {
+      // 判断读写权限
+      if (!hasPermissions()) {
+        return;
+      }
+
       if (!reconfirm) {
         return resolve(this.request<P>("post", url, { data }, config));
       }

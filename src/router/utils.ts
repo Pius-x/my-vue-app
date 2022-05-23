@@ -7,6 +7,8 @@ import { buildHierarchyTree } from "/@/utils/tree";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
 import { useUserStore } from "/@/store/modules/user";
 import showRouter from "/@/router/modules/showRouter";
+import { isEmpty } from "/@/utils/is";
+import { showMessage } from "/@/utils/message";
 const Layout = () => import("/@/layout/index.vue");
 const IFrame = () => import("/@/layout/frameView.vue");
 // https://cn.vitejs.dev/guide/features.html#glob-import
@@ -253,23 +255,21 @@ function getHistoryMode(): RouterHistory {
   }
 }
 
-// 是否有权限
-function hasPermissions(value: Array<string>): boolean {
-  if (value && value instanceof Array && value.length > 0) {
-    const roles = usePermissionStoreHook().buttonAuth;
-    const permissionRoles = value;
+// 是否有写权限
+function hasPermissions(): boolean {
+  waitRouterReady().then();
+  const curRouter = router.currentRoute.value.path;
 
-    const hasPermission = roles.some(role => {
-      return permissionRoles.includes(role);
-    });
-
-    if (!hasPermission) {
-      return false;
-    }
-    return true;
-  } else {
+  const routerMap = useUserStore().routerMap;
+  if ((curRouter !== "/login" && isEmpty(routerMap) === false && routerMap.get(curRouter)) ?? 1 === 1) {
+    showMessage(`${curRouter} 你只拥有当前页面的读权限！`, "error");
     return false;
   }
+  return true;
+}
+
+async function waitRouterReady() {
+  await router.isReady();
 }
 
 export {

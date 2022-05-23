@@ -54,7 +54,7 @@ const rules = reactive({
 
 //登出 清空本地数据
 function loginOut() {
-  useUserStore().logOut();
+  useUserStore().clearTokenCache();
 }
 
 //更新密码

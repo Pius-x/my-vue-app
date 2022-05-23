@@ -7,3 +7,9 @@ export interface toRouteType extends RouteLocationNormalized {
     dynamicLevel?: string;
   };
 }
+
+//路由记录
+export interface RouterListRecordType {
+  path: string;
+  readonly: number;
+}

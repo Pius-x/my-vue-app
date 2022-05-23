@@ -4,11 +4,12 @@ import { initRouter } from "/@/router/utils";
 import bg from "/@/assets/login/bg.png";
 import LogosVue from "~icons/logos/vue";
 import Illustration from "/@/assets/login/illustration.svg?component";
-import { useUserStoreHook } from "/@/store/modules/user";
 import { isEmpty } from "/@/utils/is";
 import { showMessage } from "/@/utils/message";
 import RiUser from "~icons/ri/user-3-fill";
 import RiLock from "~icons/ri/lock-fill";
+import { HttpResponse } from "/@/utils/http/types";
+import { setToken } from "/@/utils/auth";
 
 const router = useRouter();
 
@@ -27,15 +28,19 @@ const onLogin = (): void => {
     return;
   }
 
-  useUserStoreHook()
-    .loginByUsername({ userName: user.value, password: pwd.value })
-    .then(() => {
+  //发起请求
+  http
+    .post("base/login", { userName: user.value, password: pwd.value }, false)
+    .then((data: HttpResponse) => {
+      //设置Token
+      setToken(data.data);
+
       //登录的时候初始化路由
       initRouter().then(() => {});
       router.push("/");
     })
-    .catch(() => {
-      return;
+    .catch(error => {
+      return error;
     });
 };
 

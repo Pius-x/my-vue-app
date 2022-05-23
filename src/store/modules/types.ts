@@ -43,5 +43,6 @@ export type userType = {
   gid: number;
   headPic: number;
   name: string;
-  routerList?: { path: string; onlyRead: number }[];
+  routerList: { path: string; onlyRead: number }[];
+  routerMap: Map<string, number>;
 };

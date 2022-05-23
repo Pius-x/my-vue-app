@@ -3,8 +3,8 @@ import { store } from "/@/store";
 import { userType } from "./types";
 import { router } from "/@/router";
 import { storageLocal, storageSession } from "/@/utils/storage";
-import { setToken, removeToken } from "/@/utils/auth";
-import { HttpResponse } from "/@/utils/http/types";
+import { removeToken } from "/@/utils/auth";
+import { RouterListRecordType } from "/@/router/types";
 
 export const useUserStore = defineStore({
   id: "pure-user",
@@ -16,7 +16,8 @@ export const useUserStore = defineStore({
     gid: 0,
     headPic: 0,
     name: "",
-    routerList: []
+    routerList: [],
+    routerMap: new Map()
   }),
   actions: {
     setUserInfo(userInfo) {
@@ -28,23 +29,19 @@ export const useUserStore = defineStore({
       this.headPic = userInfo.headPic;
       this.name = userInfo.name;
       this.routerList = userInfo.routerList;
+
+      const routerMap: Map<string, number> = new Map<string, number>();
+      userInfo.routerList &&
+        userInfo.routerList.forEach((route: RouterListRecordType) => {
+          const { path, readonly } = route;
+          routerMap.set(path, readonly);
+        });
+
+      this.routerMap = routerMap;
     },
-    // 登入，数据缓存
-    async loginByUsername(data) {
-      return new Promise<void>((resolve, reject) => {
-        http
-          .post("base/login", data, false)
-          .then((data: HttpResponse) => {
-            setToken(data.data);
-            resolve();
-          })
-          .catch(error => {
-            reject(error);
-          });
-      });
-    },
-    // 登出 清空缓存
-    logOut() {
+
+    // 清空缓存
+    clearTokenCache() {
       this.token = "";
       this.name = "";
       removeToken();
