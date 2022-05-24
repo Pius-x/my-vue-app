@@ -2,6 +2,7 @@ import { RouteRecordRaw } from "vue-router";
 import EpHomeFilled from "~icons/ep/home-filled";
 import MaterialSymbolsPerson from "~icons/material-symbols/person";
 import MaterialSymbolsGroup from "~icons/material-symbols/group";
+import CarbonOperationsRecord from "~icons/carbon/operations-record";
 import EpLollipop from "~icons/ep/lollipop";
 const Layout = () => import("/@/layout/index.vue");
 
@@ -25,40 +26,6 @@ const showRouter: Array<RouteRecordRaw> = [
         meta: {
           icon: shallowRef(EpHomeFilled),
           title: "首页"
-        }
-      }
-    ]
-  },
-  {
-    path: "/permission",
-    name: "permission",
-    redirect: "/permission/page/index",
-    meta: {
-      title: "权限管理",
-      icon: shallowRef(EpLollipop),
-      rank: 7
-    },
-    children: [
-      {
-        path: "/permission/page",
-        component: () => import("/@/views/permission/page/index.vue"),
-        name: "permissionPage",
-        meta: {
-          icon: shallowRef(EpHomeFilled),
-          title: "页面权限",
-          extraIcon: {
-            svg: true,
-            name: "team-iconxinpin"
-          }
-        }
-      },
-      {
-        path: "/permission/button",
-        name: "permissionButton",
-        component: () => import("/@/views/permission/button/index.vue"),
-
-        meta: {
-          title: "按钮权限"
         }
       }
     ]
@@ -91,6 +58,16 @@ const showRouter: Array<RouteRecordRaw> = [
         meta: {
           icon: shallowRef(MaterialSymbolsGroup),
           title: "分组管理"
+        }
+      },
+      {
+        path: "/system/operationRecords",
+        name: "systemOperationRecords",
+        component: () => import("/@/views/system/operationRecords/index.vue"),
+
+        meta: {
+          icon: shallowRef(CarbonOperationsRecord),
+          title: "操作记录"
         }
       }
     ]

@@ -1,10 +1,10 @@
 <template>
   <div>
     <el-card>
-      <el-row style="margin-bottom: 10px" justify="start">
+      <el-row justify="start">
         <el-button :icon="EpPlus" type="primary" @click="addUser"> 新增用户 </el-button>
       </el-row>
-
+      <hr style="margin: 10px 0" />
       <el-table stripe border :data="dataList" :header-cell-style="{ background: '#f4f4f5', color: '#606266' }">
         <el-table-column label="用户ID" align="center" prop="id" width="120" />
         <el-table-column label="账号名" align="center" prop="account" />

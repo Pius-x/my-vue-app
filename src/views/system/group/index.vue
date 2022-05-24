@@ -1,9 +1,10 @@
 <template>
   <div>
     <el-card>
-      <el-row style="margin-bottom: 10px" justify="start">
+      <el-row justify="start">
         <el-button v-if="useUserStore().gid === 0" :icon="EpPlus" type="primary" @click="addAuthority(0)"> 新增分组 </el-button>
       </el-row>
+      <hr style="margin: 10px 0" />
       <el-table
         border
         :default-expand-all="true"
@@ -143,7 +144,7 @@ import EpDelete from "~icons/ep/delete";
 
 import { ElMessage, ElMessageBox } from "element-plus";
 import { HttpResponse } from "/@/utils/http/types";
-import { isUnDef } from "/@/utils/is";
+import { isEmpty, isUnDef } from "/@/utils/is";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
 import { useUserStore } from "/@/store/modules/user";
 
@@ -165,7 +166,7 @@ const menuDefaultProps = ref({
 });
 
 const relation = async () => {
-  const checkArr: string[] = menuTree.value.getCheckedKeys(false);
+  const checkArr: string[] = [...menuTree.value.getCheckedKeys(false), ...menuTree.value.getHalfCheckedKeys()];
 
   const routerList: { path: string; readonly: number }[] = [];
   checkArr.forEach(item => {
@@ -195,11 +196,29 @@ const initDrawerRouter = async row => {
   curParentGid.value = row.parent_gid;
   menuTreeData.value = usePermissionStoreHook().wholeMenus;
 
+  getMenuTreeIds(row);
+};
+
+function findParentPath(item, parentPathList) {
+  if (!isEmpty(item.children) && !isUnDef(item.children)) {
+    parentPathList.push(item.path);
+
+    item.children.forEach(item2 => {
+      findParentPath(item2, parentPathList);
+    });
+  }
+}
+function getMenuTreeIds(row) {
+  const parentPathList = [];
+  usePermissionStoreHook().wholeMenus.forEach(item => {
+    findParentPath(item, parentPathList);
+  });
+
   // 获取自己可见的菜单树
   const routers = ["/", "/welcome"];
   const readOnlyArr = {};
   row.router_list.forEach(item => {
-    if (routers.includes(item.path)) {
+    if (routers.includes(item.path) || parentPathList.includes(item.path)) {
       return;
     }
     routers.push(item.path);
@@ -208,7 +227,7 @@ const initDrawerRouter = async row => {
 
   menuTreeIds.value = routers;
   readonlyMap.value = readOnlyArr;
-};
+}
 
 const userListData = ref([]);
 

@@ -21,7 +21,7 @@ import noServer from "/@/assets/status/500.svg?component";
           }
         }"
       >
-        403
+        500
       </p>
       <p
         class="mb-4 text-gray-500"

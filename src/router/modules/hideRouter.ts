@@ -6,7 +6,7 @@ const hideRouter: Array<RouteRecordRaw> = [
   {
     path: "/login",
     name: "login",
-    component: () => import("/@/views/login.vue"),
+    component: () => import("/@/views/login/index.vue"),
     meta: {
       title: "登陆",
       rank: 101

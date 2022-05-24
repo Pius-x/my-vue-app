@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import { initRouter } from "/@/router/utils";
-import bg from "/@/assets/login/bg.png";
+import { bg, currentWeek } from "./static";
 import LogosVue from "~icons/logos/vue";
-import Illustration from "/@/assets/login/illustration.svg?component";
 import { isEmpty } from "/@/utils/is";
 import { showMessage } from "/@/utils/message";
 import RiUser from "~icons/ri/user-3-fill";
@@ -68,7 +67,7 @@ function onUserBlur() {
   <el-image :src="bg" class="wave" />
   <div class="login-container">
     <div class="img">
-      <illustration />
+      <component :is="currentWeek" />
     </div>
     <div class="login-box">
       <div class="login-form">
@@ -109,5 +108,5 @@ function onUserBlur() {
 </template>
 
 <style scoped>
-@import url("../style/login.css");
+@import url("../../style/login.css");
 </style>
