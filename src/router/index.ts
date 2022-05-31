@@ -35,6 +35,9 @@ export const remainingPaths = formatFlatteningRoutes(hideRouter).map(v => {
   return v.path;
 });
 
+// 所有人可见的路由
+export const whitePaths = ["/", "/welcome"];
+
 // 创建路由实例
 export const router: Router = createRouter({
   history: getHistoryMode(),

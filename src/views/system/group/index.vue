@@ -60,7 +60,6 @@
                 <span style="float: right; margin-right: 40px">
                   <el-switch
                     v-if="isUnDef(data.children) && data.path !== '/welcome'"
-                    :disabled="curGid === useUserStore().gid"
                     inline-prompt
                     :active-icon="EpCheck"
                     :inactive-icon="EpClose"
@@ -134,7 +133,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup name="Group">
 import EpCheck from "~icons/ep/check";
 import EpClose from "~icons/ep/close";
 import EpSetting from "~icons/ep/setting";
@@ -147,6 +146,7 @@ import { HttpResponse } from "/@/utils/http/types";
 import { isEmpty, isUnDef } from "/@/utils/is";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
 import { useUserStore } from "/@/store/modules/user";
+import { showMessage } from "/@/utils/message";
 
 const menuTreeIds = ref([]);
 const readonlyMap = ref({});
@@ -161,7 +161,7 @@ const menuDefaultProps = ref({
     return data.meta.title;
   },
   disabled: data => {
-    return ["/", "/welcome"].includes(data.path) || curGid.value === useUserStore().gid;
+    return ["/", "/welcome"].includes(data.path);
   }
 });
 
@@ -181,7 +181,11 @@ const relation = async () => {
 
 const multiUpdateUserGid = async () => {
   const userGidList = [];
+  const selfId = useUserStore().id;
   userListData.value.forEach(item => {
+    if (selfId === item.id) {
+      return;
+    }
     userGidList.push({ id: item.id, gid: item.gid });
   });
 
@@ -293,6 +297,10 @@ const curGroupName = ref("");
 
 // 打开权限侧边栏
 const openDrawerRouter = row => {
+  if (useUserStore().gid === row.gid) {
+    showMessage("不能设置自己所在分组权限", "warning");
+    return;
+  }
   drawerRouter.value = true;
   curGroupName.value = row.gname;
   initDrawerRouter(row);
@@ -310,6 +318,10 @@ function openDrawerUserList(row) {
 
 // 删除分组
 const deleteAuth = row => {
+  if (useUserStore().gid === row.gid) {
+    showMessage("不能删除自己所在分组", "warning");
+    return;
+  }
   ElMessageBox.confirm("此操作将永久删除该分组, 是否继续?", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
@@ -425,6 +437,10 @@ const addAuthority = parentGid => {
 
 // 编辑分组
 const editAuthority = row => {
+  if (useUserStore().gid === row.gid) {
+    showMessage("不能编辑自己所在分组", "warning");
+    return;
+  }
   setOptions();
   dialogTitle.value = "编辑分组";
   dialogType.value = "edit";
@@ -445,12 +461,6 @@ const tableRowClassName = ({ row }) => {
   }
 
   return "";
-};
-</script>
-
-<script lang="ts">
-export default {
-  name: "Group"
 };
 </script>
 

@@ -1,5 +1,5 @@
 import { RouterHistory, RouteRecordRaw, RouteComponent, createWebHistory, createWebHashHistory, RouteRecordNormalized } from "vue-router";
-import { remainingPaths, router } from "./index";
+import { remainingPaths, router, whitePaths } from "./index";
 import { loadEnv } from "../../build";
 import { useTimeoutFn } from "@vueuse/core";
 import { RouteConfigs } from "/@/layout/types";
@@ -105,7 +105,7 @@ function dynamicRouter(): string[] {
     });
   }
 
-  return routers.concat(remainingPaths);
+  return [...new Set([...routers, ...remainingPaths, ...whitePaths])];
 }
 
 // 过滤无权限路由

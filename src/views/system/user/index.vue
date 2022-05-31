@@ -110,6 +110,7 @@ import { Ref } from "vue";
 import { HttpResponse } from "/@/utils/http/types";
 import AntPagination from "/@/components/AntPagination/index.vue";
 import { useUserStore } from "/@/store/modules/user";
+import { showMessage } from "/@/utils/message";
 
 let searchCondition = ref("");
 let userInfoDialogVisible = ref(false);
@@ -159,6 +160,11 @@ function editUser(row) {
   let { id, account, gid, name, mobile } = row;
   userInfoForm.value = { id, account, gid, name, mobile };
 
+  if (useUserStore().id === id) {
+    showMessage("不能修改自己的信息", "warning");
+    return;
+  }
+
   userInfoDialogVisible.value = true;
 }
 
@@ -192,6 +198,11 @@ function updateUserInfo() {
 
 function handleDelete(row) {
   const id = row.id;
+  if (useUserStore().id === id) {
+    showMessage("不能删除自己", "warning");
+    return;
+  }
+
   http.post("user/deleteUser", { id }).then((data: HttpResponse) => {
     if (data.code === 0) {
       getUserList();
@@ -201,6 +212,10 @@ function handleDelete(row) {
 
 function handleRestPwd(row) {
   const id = row.id;
+  if (useUserStore().id === id) {
+    showMessage("不能重置自己的密码", "warning");
+    return;
+  }
   http.post("user/resetPassword", { id });
 }
 
@@ -267,7 +282,7 @@ onMounted(() => {
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 :deep(.el-dropdown-menu__item i) {
   margin: 0;
 }

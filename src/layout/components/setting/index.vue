@@ -59,7 +59,7 @@ function loginOut() {
 
 //更新密码
 function updatePwd() {
-  const params = { Username: useUserStore().account, Password: pwdForm.oldPass, NewPassword: pwdForm.pass };
+  const params = { Id: useUserStore().id, Password: pwdForm.oldPass, NewPassword: pwdForm.pass };
 
   http.post("user/changePassword", params).then((data: HttpResponse) => {
     if (data.code === 0) {
@@ -83,7 +83,7 @@ const submitForm = () => {
 function updateHeadPic() {
   const headPicId = Number(selectedId.value);
 
-  http.post("user/updateHeadPic", { account: useUserStore().account, headPic: headPicId }).then((data: HttpResponse) => {
+  http.post("user/updateHeadPic", { id: useUserStore().id, headPic: headPicId }).then((data: HttpResponse) => {
     if (data.code === 0) {
       //实时改变头像
       headPic.value = headPicId;
