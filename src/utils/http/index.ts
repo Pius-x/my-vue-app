@@ -60,8 +60,7 @@ class PureHttp {
         if (userInfo.token) {
           //判断token是否过期 过期就重登陆
           const now = new Date().getTime();
-          const expired = parseInt(userInfo.expiresAt) - now <= 0;
-          if (expired) {
+          if (parseInt(userInfo.expiresAt) - now <= 0) {
             useUserStore().clearTokenCache();
           } else {
             config.headers["X-token"] = userInfo.token;

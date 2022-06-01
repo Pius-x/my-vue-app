@@ -93,13 +93,7 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  name: "user"
-};
-</script>
-
-<script setup lang="ts">
+<script setup lang="ts" name="User">
 import EpUnlock from "~icons/ep/unlock";
 import EpDelete from "~icons/ep/delete";
 import EpEditPen from "~icons/ep/edit-pen";
@@ -124,7 +118,7 @@ let pagination = ref({
   currentPage: 1
 });
 
-watch(pagination.value, x => {
+watch(pagination.value, () => {
   getUserList();
 });
 

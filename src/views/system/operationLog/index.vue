@@ -64,7 +64,7 @@
   </div>
 </template>
 
-<script setup name="SysOperationRecord">
+<script setup name="OperationLog">
 import AntPagination from "/@/components/AntPagination/index.vue";
 import EpSearch from "~icons/ep/search";
 import EpRefresh from "~icons/ep/refresh";

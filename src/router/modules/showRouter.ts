@@ -61,9 +61,9 @@ const showRouter: Array<RouteRecordRaw> = [
         }
       },
       {
-        path: "/system/operationRecords",
-        name: "systemOperationRecords",
-        component: () => import("/@/views/system/operationRecords/index.vue"),
+        path: "/system/operationLog",
+        name: "systemOperationLog",
+        component: () => import("/@/views/system/operationLog/index.vue"),
 
         meta: {
           icon: shallowRef(CarbonOperationsRecord),

@@ -60,6 +60,7 @@
                 <span style="float: right; margin-right: 40px">
                   <el-switch
                     v-if="isUnDef(data.children) && data.path !== '/welcome'"
+                    :disabled="disableSwitches.includes(data.path) && readonlyMap[data.path] === 1"
                     inline-prompt
                     :active-icon="EpCheck"
                     :inactive-icon="EpClose"
@@ -143,17 +144,18 @@ import EpDelete from "~icons/ep/delete";
 
 import { ElMessage, ElMessageBox } from "element-plus";
 import { HttpResponse } from "/@/utils/http/types";
-import { isEmpty, isUnDef } from "/@/utils/is";
+import { isEmpty, isNull, isUnDef } from "/@/utils/is";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
 import { useUserStore } from "/@/store/modules/user";
 import { showMessage } from "/@/utils/message";
+import { Ref } from "vue";
 
 const menuTreeIds = ref([]);
 const readonlyMap = ref({});
 const menuTree = ref(null); // 关联树 确认方法
 const curGid = ref(0);
 const curParentGid = ref(0);
-const menuTreeData = ref([]);
+const menuTreeData = ref(usePermissionStoreHook().wholeMenus);
 
 const menuDefaultProps = ref({
   children: "children",
@@ -161,7 +163,7 @@ const menuDefaultProps = ref({
     return data.meta.title;
   },
   disabled: data => {
-    return ["/", "/welcome"].includes(data.path);
+    return disableTreeIds.value.includes(data.path);
   }
 });
 
@@ -195,12 +197,45 @@ const multiUpdateUserGid = async () => {
   });
 };
 
+const disableTreeIds = ref([]);
+const disableSwitches = ref([]);
+
+function disabledTreeIds() {
+  disableTreeIds.value = ["/", "/welcome"];
+  disableSwitches.value = [];
+
+  if (curParentGid.value === 0 || isUnDef(groupRouterMap.value.get(curParentGid.value))) {
+    return;
+  }
+
+  const parentRouterList = groupRouterMap.value.get(curParentGid.value);
+
+  const parentRouterMap: Map<string, number> = new Map();
+  parentRouterList.forEach((v: { path; readonly }) => {
+    parentRouterMap.set(v.path, v.readonly);
+  });
+
+  let readonly = 0;
+  allPathList.value.forEach(item => {
+    readonly = parentRouterMap.get(item);
+
+    if (readonly !== 0) {
+      disableSwitches.value.push(item);
+
+      if (isUnDef(readonly)) {
+        disableTreeIds.value.push(item);
+      }
+    }
+  });
+}
+
 const initDrawerRouter = async row => {
   curGid.value = row.gid;
   curParentGid.value = row.parent_gid;
-  menuTreeData.value = usePermissionStoreHook().wholeMenus;
 
-  getMenuTreeIds(row);
+  getMenuTreeIds(row.router_list);
+
+  disabledTreeIds();
 };
 
 function findParentPath(item, parentPathList) {
@@ -212,16 +247,23 @@ function findParentPath(item, parentPathList) {
     });
   }
 }
-function getMenuTreeIds(row) {
+
+const parentPathList = getParentPathList();
+
+function getParentPathList() {
   const parentPathList = [];
-  usePermissionStoreHook().wholeMenus.forEach(item => {
+  menuTreeData.value.forEach(item => {
     findParentPath(item, parentPathList);
   });
 
+  return parentPathList;
+}
+
+function getMenuTreeIds(routerList) {
   // 获取自己可见的菜单树
   const routers = ["/", "/welcome"];
   const readOnlyArr = {};
-  row.router_list.forEach(item => {
+  routerList.forEach(item => {
     if (routers.includes(item.path) || parentPathList.includes(item.path)) {
       return;
     }
@@ -275,9 +317,35 @@ const getTableData = async () => {
       for (const listElement of list) {
         parentGidList.value.push(listElement.gid);
       }
+
+      fullInGroupMap(list);
+
+      buildAllPathList(menuTreeData.value);
     }
   });
 };
+
+const groupRouterMap: Ref<Map<number, []>> = ref(new Map());
+
+function fullInGroupMap(groupList) {
+  groupList.forEach(item => {
+    groupRouterMap.value.set(item.gid, item.router_list);
+    if (!isNull(item.children)) {
+      fullInGroupMap(item.children);
+    }
+  });
+}
+
+const allPathList = ref([]);
+
+function buildAllPathList(routerList) {
+  routerList.forEach(item => {
+    allPathList.value.push(item.path);
+    if (!isUnDef(item.children)) {
+      buildAllPathList(item.children);
+    }
+  });
+}
 
 getTableData();
 
