@@ -100,7 +100,14 @@ class PureHttp {
         // 弹出错误码消息 异常请求都弹 Post请求弹消息
         const msgType = $data.code === 0 ? "success" : "warning";
         if (msgType !== "success" || $config.method === "post") {
-          showMessage($data.msg, msgType);
+          let msg = $data.msg;
+
+          // 登录Token失效 重新登录
+          if ($data.code === 2) {
+            msg += `, 3秒后退回登录界面, 请重新登录`;
+            setTimeout(useUserStore().clearTokenCache, 3000);
+          }
+          showMessage(msg, msgType);
         }
         return $data;
       },

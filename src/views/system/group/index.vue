@@ -457,9 +457,6 @@ const enterDialog = () => {
           }
           break;
       }
-
-      initForm();
-      dialogFormVisible.value = false;
     }
   });
 };

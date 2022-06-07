@@ -59,12 +59,12 @@ function loginOut() {
 
 //更新密码
 function updatePwd() {
-  const params = { Id: useUserStore().id, Password: pwdForm.oldPass, NewPassword: pwdForm.pass };
+  const params = { id: useUserStore().id, password: pwdForm.oldPass, newPassword: pwdForm.pass };
 
   http.post("user/changePassword", params).then((data: HttpResponse) => {
     if (data.code === 0) {
       editPwdDialogVisible.value = false;
-      showMessage(`3秒后退回登录界面，重新登录`, "warning");
+      showMessage(`3秒后退回登录界面，请重新登录`, "warning");
       setTimeout(loginOut, 3000);
     }
   });
