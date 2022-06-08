@@ -15,9 +15,9 @@
       </el-row>
       <hr style="margin: 10px 0" />
       <el-table stripe border :data="tableData" :header-cell-style="{ background: '#f4f4f5', color: '#606266' }">
-        <el-table-column align="center" label="ID" width="120" prop="ID" />
+        <el-table-column align="center" label="ID" width="120" prop="id" />
         <el-table-column align="center" label="操作人" width="140" prop="user_account" />
-        <el-table-column align="center" label="日期" width="180" prop="CreatedAt" :formatter="formatData" />
+        <el-table-column align="center" label="日期" width="180" prop="created_at" :formatter="formatData" />
         <el-table-column align="center" label="状态码" prop="status" width="100">
           <template #default="{ row }">
             <el-tag v-if="row.status === 200" type="success">{{ row.status }}</el-tag>
@@ -100,7 +100,7 @@ const onSubmit = () => {
 const getTableData = () => {
   const params = { page: pagination.value.currentPage, pageSize: pagination.value.pageSize, ...searchInfo.value };
 
-  http.get("sysOperationRecord/getSysOperationRecordList", params).then(table => {
+  http.get("operationLog/getOperationLogList", params).then(table => {
     if (table.code === 0) {
       tableData.value = table.data.list;
       total.value = table.data.total;
