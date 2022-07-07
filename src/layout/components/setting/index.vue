@@ -7,12 +7,14 @@ import { showMessage } from "/@/utils/message";
 import { storageSession } from "/@/utils/storage";
 import EditCircleLine from "~icons/ri/edit-circle-line";
 import LogoutCircleRLine from "~icons/ri/logout-circle-r-line";
+import FsLogin from "/@/components/Fslogin/index.vue";
 
 const { username } = useNav();
 
-// 头像资源
-let headPic = ref(useUserStore().headPic);
+// 用户信息解析
+const { id: userId, bindFs, fsHeadPic, headPic, isSuperGroup } = useUserStore();
 
+const fsBindDialogVisible = ref(false);
 const editPwdDialogVisible = ref(false);
 const headPicDialogVisible = ref(false);
 const selectedId = ref("");
@@ -59,7 +61,7 @@ function loginOut() {
 
 //更新密码
 function updatePwd() {
-  const params = { id: useUserStore().id, password: pwdForm.oldPass, newPassword: pwdForm.pass };
+  const params = { id: userId, password: pwdForm.oldPass, newPassword: pwdForm.pass };
 
   http.post("user/changePassword", params).then((data: HttpResponse) => {
     if (data.code === 0) {
@@ -83,17 +85,14 @@ const submitForm = () => {
 function updateHeadPic() {
   const headPicId = Number(selectedId.value);
 
-  http.post("user/updateHeadPic", { id: useUserStore().id, headPic: headPicId }).then((data: HttpResponse) => {
+  http.post("user/updateHeadPic", { id: userId, headPic: headPicId }).then((data: HttpResponse) => {
     if (data.code === 0) {
-      //实时改变头像
-      headPic.value = headPicId;
-
       headPicDialogVisible.value = false;
 
       useUserStore().headPic = headPicId;
 
       const userInfo = storageSession.getItem("user-info");
-      userInfo.headPic = headPicId;
+      userInfo.head_pic = headPicId;
       storageSession.setItem("user-info", userInfo);
     }
   });
@@ -102,7 +101,8 @@ function updateHeadPic() {
 
 <template>
   <span class="el-dropdown-link">
-    <el-avatar :size="44" :src="`src/assets/headIcon/head_${headPic}.png`" @click="headPicDialogVisible = true" />
+    <el-avatar v-if="bindFs" :size="44" :src="fsHeadPic" />
+    <el-avatar v-else :size="44" :src="`src/assets/headIcon/head_${headPic}.png`" @click="headPicDialogVisible = true" />
   </span>
   <el-dropdown trigger="click">
     <span class="el-dropdown-link">
@@ -110,6 +110,9 @@ function updateHeadPic() {
     </span>
     <template #dropdown>
       <el-dropdown-menu class="logout">
+        <el-dropdown-item v-if="!bindFs && !isSuperGroup" @click="fsBindDialogVisible = true">
+          <edit-circle-line style="margin: 5px" />关联飞书
+        </el-dropdown-item>
         <el-dropdown-item @click="editPwdDialogVisible = true"> <edit-circle-line style="margin: 5px" />密码修改 </el-dropdown-item>
         <el-dropdown-item @click="loginOut"> <logout-circle-r-line style="margin: 5px" />退出系统 </el-dropdown-item>
       </el-dropdown-menu>
@@ -140,6 +143,11 @@ function updateHeadPic() {
     </el-dialog>
   </div>
   <div>
+    <el-dialog v-model="fsBindDialogVisible" title="关联飞书" width="30%" destroy-on-close center>
+      <div class="el-dialog--center">
+        <fs-login title="关联" callback-func="base/fsBind" />
+      </div>
+    </el-dialog>
     <el-dialog v-model="headPicDialogVisible" title="头像选择" width="30%" destroy-on-close center>
       <el-row v-for="row in [1, 2, 3]" :key="row">
         <el-col

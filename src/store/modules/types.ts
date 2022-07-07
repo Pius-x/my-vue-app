@@ -43,6 +43,12 @@ export type userType = {
   gid: number;
   headPic: number;
   name: string;
+  lastLoginTime: string;
+  bindFs: boolean;
+  isSuperGroup: boolean;
+  isRootUser: boolean;
+  fsHeadPic: string;
+  fsName: string;
   routerList: { path: string; onlyRead: number }[];
   routerMap: Map<string, number>;
 };

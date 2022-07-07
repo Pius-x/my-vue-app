@@ -76,7 +76,6 @@ declare global {
     Title?: string;
     FixedHeader?: boolean;
     HiddenSideBar?: boolean;
-    MultiTagsCache?: boolean;
     KeepAlive?: boolean;
     Locale?: string;
     Layout?: string;

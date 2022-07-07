@@ -4,7 +4,6 @@ import { routerArrays } from "./types";
 import { emitter } from "/@/utils/mitt";
 import { useAppStoreHook } from "/@/store/modules/app";
 import { deviceDetection } from "/@/utils/deviceDetection";
-import { useMultiTagsStore } from "/@/store/modules/multiTags";
 import { useSettingStoreHook } from "/@/store/modules/settings";
 
 import BackTop from "~icons/ri/rocket-line";
@@ -23,7 +22,7 @@ const instance = getCurrentInstance().appContext.app.config.globalProperties;
 // 清空缓存后从serverConfig.json读取默认配置并赋值到storage中
 const layout = computed(() => {
   // 路由
-  if (useMultiTagsStore().multiTagsCache && (!instance.$storage.tags || instance.$storage.tags.length === 0)) {
+  if (!instance.$storage.tags || instance.$storage.tags.length === 0) {
     // eslint-disable-next-line vue/no-side-effects-in-computed-properties
     instance.$storage.tags = routerArrays;
   }
@@ -46,8 +45,7 @@ const layout = computed(() => {
       weak: instance.$config?.Weak ?? false,
       hideTabs: instance.$config?.HideTabs ?? false,
       showLogo: instance.$config?.ShowLogo ?? true,
-      showModel: instance.$config?.ShowModel ?? "smart",
-      multiTagsCache: instance.$config?.MultiTagsCache ?? false
+      showModel: instance.$config?.ShowModel ?? "smart"
     };
   }
   return instance.$storage?.layout.layout;

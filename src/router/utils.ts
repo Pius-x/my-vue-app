@@ -5,10 +5,12 @@ import { useTimeoutFn } from "@vueuse/core";
 import { RouteConfigs } from "/@/layout/types";
 import { buildHierarchyTree } from "/@/utils/tree";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
-import { useUserStore } from "/@/store/modules/user";
+import { useUserStore, useUserStoreHook } from "/@/store/modules/user";
 import showRouter from "/@/router/modules/showRouter";
 import { isEmpty } from "/@/utils/is";
 import { showMessage } from "/@/utils/message";
+import { HttpResponse } from "/@/utils/http/types";
+import { storageSession } from "/@/utils/storage";
 const Layout = () => import("/@/layout/index.vue");
 const IFrame = () => import("/@/layout/frameView.vue");
 // https://cn.vitejs.dev/guide/features.html#glob-import
@@ -92,18 +94,17 @@ function findRouteByPath(path: string, routes: RouteRecordRaw[]) {
 
 //有权限的动态路由表
 function dynamicRouter(): string[] {
-  const { routerList, gid } = useUserStore();
+  const { routerList, isSuperGroup } = useUserStore();
 
-  let routers: string[];
-  if (gid === 0) {
-    routers = formatFlatteningRoutes(showRouter).map(v => {
-      return v.path;
-    });
-  } else {
-    routers = routerList.map(item => {
-      return item.path;
-    });
+  let filterRouters: any[] = routerList;
+
+  if (isSuperGroup) {
+    filterRouters = formatFlatteningRoutes(showRouter);
   }
+
+  const routers: string[] = filterRouters.map(item => {
+    return item.path;
+  });
 
   return [...new Set([...routers, ...remainingPaths, ...whitePaths])];
 }
@@ -129,13 +130,38 @@ function initRouter() {
     filterRouter(showRouters);
     resolve(router);
     //过滤无权限的导航栏
-    usePermissionStoreHook().changeNavbar(showRouters);
+    usePermissionStoreHook().changeNavbar(showRouters).then();
 
     router.addRoute({
       path: "/:pathMatch(.*)",
       redirect: "/error/404"
     });
   });
+}
+
+// 刷新路由
+async function refreshRouter(userInfo) {
+  const { id } = userInfo;
+  let gid = 0;
+  let routerList = [
+    { path: "/", readonly: 0 },
+    { path: "/welcome", readonly: 0 }
+  ];
+  await http.get("user/getUserInfoById", { id }).then((data: HttpResponse) => {
+    if (data.code === 0) {
+      routerList = data.data.router_list;
+      gid = data.data.gid;
+    }
+  });
+
+  userInfo.router_list = routerList;
+  userInfo.gid = gid;
+
+  // 更新回话存储和Pinia
+  storageSession.setItem("user-info", userInfo);
+  useUserStoreHook().setUserInfo(userInfo);
+
+  return routerList;
 }
 
 /**
@@ -276,6 +302,7 @@ export {
   ascending,
   filterTree,
   initRouter,
+  refreshRouter,
   hasPermissions,
   getHistoryMode,
   addAsyncRoutes,

@@ -1,12 +1,14 @@
 <template>
   <div>
     <el-card>
-      <el-row justify="start">
-        <el-button v-if="useUserStore().gid === 0" :icon="EpPlus" type="primary" @click="addAuthority(0)"> 新增分组 </el-button>
+      <el-row justify="space-between" align="bottom">
+        <el-button v-if="isSuperGroup" :icon="EpPlus" type="primary" @click="addAuthority(0)"> 新增分组 </el-button>
+        <el-tag type="warning" class="">只展示当前权限下的分组列表</el-tag>
       </el-row>
       <hr style="margin: 10px 0" />
       <el-table
         border
+        v-loading="loading"
         :default-expand-all="true"
         table-layout="auto"
         :header-cell-style="{ background: '#f4f4f5', color: '#606266' }"
@@ -15,14 +17,12 @@
         :row-class-name="tableRowClassName"
         row-key="gid"
       >
-        <el-table-column align="left" label="分组名" prop="gid">
-          <template #default="{ row }">
-            {{ row.gname }}
-          </template>
-        </el-table-column>
+        <el-table-column align="left" label="分组名" prop="gname" />
         <el-table-column align="center" label="用户列表" width="380">
           <template #default="{ row }">
-            <el-button type="primary" icon="delete" size="small" text @click="openDrawerUserList(row)">点击查看用户列表</el-button>
+            <el-button :disabled="operatorGid === row.gid" type="primary" icon="delete" size="small" text @click="openDrawerUserList(row)">
+              点击查看用户列表
+            </el-button>
           </template>
         </el-table-column>
         <el-table-column align="center" label="操作" width="460">
@@ -36,9 +36,44 @@
       </el-table>
     </el-card>
 
+    <!-- 用户列表侧边栏 -->
+    <el-drawer :with-header="false" v-if="drawerUserList" v-model="drawerUserList" size="40%" title="分组权限配置">
+      <el-tabs class="role-box" type="border-card">
+        <div>
+          <el-button class="fl-right" type="primary" @click="multiUpdateUserGid">确 定</el-button>
+          <el-divider />
+        </div>
+        <el-tab-pane :label="`【${curGroupName}】 用户列表`">
+          <el-table
+            v-loading="userDrawerLoading"
+            stripe
+            border
+            :data="userListData"
+            :header-cell-style="{ background: '#f4f4f5', color: '#606266' }"
+          >
+            <el-table-column label="账号名" align="center" prop="account" />
+            <el-table-column label="用户昵称" align="center" prop="name" />
+            <el-table-column label="手机号码" align="center" prop="mobile" />
+            <el-table-column label="所属分组" align="center" prop="gid">
+              <template #default="{ row }">
+                <el-cascader
+                  v-model.number="row.gid"
+                  style="width: 100%"
+                  :options="AuthorityOption"
+                  :props="{ checkStrictly: true, label: 'gname', value: 'gid', disabled: 'disabled', emitPath: false }"
+                  :show-all-levels="false"
+                  filterable
+                />
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
+    </el-drawer>
+
     <!-- 权限修改侧边栏 -->
     <el-drawer :with-header="false" v-if="drawerRouter" v-model="drawerRouter" size="40%" title="分组权限配置">
-      <el-tabs :before-leave="autoEnter" class="role-box" type="border-card">
+      <el-tabs class="role-box" type="border-card">
         <el-tab-pane :label="`【${curGroupName}】 权限菜单`">
           <div>
             <el-button class="fl-right" type="primary" @click="relation">确 定</el-button>
@@ -77,35 +112,6 @@
       </el-tabs>
     </el-drawer>
 
-    <!-- 用户列表侧边栏 -->
-    <el-drawer :with-header="false" v-if="drawerUserList" v-model="drawerUserList" size="40%" title="分组权限配置">
-      <div>
-        <el-button class="fl-right" type="primary" @click="multiUpdateUserGid">确 定</el-button>
-        <el-divider />
-      </div>
-      <el-tabs :before-leave="autoEnter" class="role-box" type="border-card">
-        <el-tab-pane :label="`【${curGroupName}】 用户列表`">
-          <el-table stripe border :data="userListData" :header-cell-style="{ background: '#f4f4f5', color: '#606266' }">
-            <el-table-column label="账号名" align="center" prop="account" />
-            <el-table-column label="用户昵称" align="center" prop="name" />
-            <el-table-column label="手机号码" align="center" prop="mobile" />
-            <el-table-column label="所属分组" align="center" prop="gid">
-              <template #default="{ row }">
-                <el-cascader
-                  v-model.number="row.gid"
-                  style="width: 100%"
-                  :options="AuthorityOption"
-                  :props="{ checkStrictly: true, label: 'gname', value: 'gid', disabled: 'disabled', emitPath: false }"
-                  :show-all-levels="false"
-                  filterable
-                />
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-tab-pane>
-      </el-tabs>
-    </el-drawer>
-
     <!-- 新增分组弹窗 -->
     <el-dialog v-model="dialogFormVisible" :title="dialogTitle">
       <el-form ref="authorityForm" :model="form" :rules="rules" label-width="180px">
@@ -113,7 +119,7 @@
           <el-cascader
             v-model.number="form.parent_gid"
             style="width: 100%"
-            :disabled="dialogType === 'add'"
+            :disabled="!isEditing"
             :options="AuthorityOption"
             :props="{ checkStrictly: true, label: 'gname', value: 'gid', disabled: 'disabled', emitPath: false }"
             :show-all-levels="false"
@@ -150,6 +156,8 @@ import { useUserStore } from "/@/store/modules/user";
 import { showMessage } from "/@/utils/message";
 import { Ref } from "vue";
 
+const { gid: operatorGid, id, isRootUser, isSuperGroup } = useUserStore(); // 操作人的Gid
+
 const menuTreeIds = ref([]);
 const readonlyMap = ref({});
 const menuTree = ref(null); // 关联树 确认方法
@@ -183,7 +191,7 @@ const relation = async () => {
 
 const multiUpdateUserGid = async () => {
   const userGidList = [];
-  const selfId = useUserStore().id;
+  const selfId = id;
   userListData.value.forEach(item => {
     if (selfId === item.id) {
       return;
@@ -229,7 +237,7 @@ function disabledTreeIds() {
   });
 }
 
-const initDrawerRouter = async row => {
+const initDrawerRouter = row => {
   curGid.value = row.gid;
   curParentGid.value = row.parent_gid;
 
@@ -276,19 +284,22 @@ function getMenuTreeIds(routerList) {
 }
 
 const userListData = ref([]);
+const userDrawerLoading = ref(false);
 
 const initDrawerUserList = async row => {
+  userDrawerLoading.value = true;
   await http.get("user/getUserListByGid", { gid: row.gid }).then((data: HttpResponse) => {
     if (data.code === 0) {
       const { list } = data.data;
       userListData.value = list;
     }
+    userDrawerLoading.value = false;
   });
 };
 
 const AuthorityOption = ref([]);
 
-const dialogType = ref("add");
+const isEditing = ref(false);
 const dialogTitle = ref("新增分组");
 const dialogFormVisible = ref(false);
 const apiDialogFlag = ref(false);
@@ -306,10 +317,12 @@ const rules = ref({
 
 const tableData = ref([]);
 const parentGidList = ref([]);
+const loading = ref(false);
 
 // 查询
 const getTableData = async () => {
-  await http.get("group/getGroupList", { gid: useUserStore().gid }).then((data: HttpResponse) => {
+  loading.value = true;
+  await http.get("group/getGroupList", { gid: operatorGid }).then((data: HttpResponse) => {
     if (data.code === 0) {
       const { list } = data.data;
       tableData.value = list;
@@ -321,6 +334,8 @@ const getTableData = async () => {
       fullInGroupMap(list);
 
       buildAllPathList(menuTreeData.value);
+
+      loading.value = false;
     }
   });
 };
@@ -349,23 +364,12 @@ function buildAllPathList(routerList) {
 
 getTableData();
 
-const menus = ref(null);
-const autoEnter = (activeName, oldActiveName) => {
-  const paneArr = [menus];
-  if (oldActiveName) {
-    if (paneArr[oldActiveName].value.needConfirm) {
-      paneArr[oldActiveName].value.enterAndNext();
-      paneArr[oldActiveName].value.needConfirm = false;
-    }
-  }
-};
-
 const drawerRouter = ref(false);
 const curGroupName = ref("");
 
 // 打开权限侧边栏
 const openDrawerRouter = row => {
-  if (useUserStore().gid === row.gid) {
+  if (operatorGid === row.gid) {
     showMessage("不能设置自己所在分组权限", "warning");
     return;
   }
@@ -380,13 +384,15 @@ const drawerUserList = ref(false);
 function openDrawerUserList(row) {
   drawerUserList.value = true;
   curGroupName.value = row.gname;
+  userListData.value = [];
+
   setOptions();
   initDrawerUserList(row);
 }
 
 // 删除分组
 const deleteAuth = row => {
-  if (useUserStore().gid === row.gid) {
+  if (operatorGid === row.gid) {
     showMessage("不能删除自己所在分组", "warning");
     return;
   }
@@ -434,35 +440,24 @@ const closeDialog = () => {
 // 确定弹窗
 const enterDialog = () => {
   authorityForm.value.validate(async valid => {
-    if (valid) {
-      switch (dialogType.value) {
-        case "add":
-          {
-            await http.post("group/createGroup", form.value).then((data: HttpResponse) => {
-              if (data.code === 0) {
-                getTableData();
-                closeDialog();
-              }
-            });
-          }
-          break;
-        case "edit":
-          {
-            await http.post("group/updateGroup", form.value).then((data: HttpResponse) => {
-              if (data.code === 0) {
-                getTableData();
-                closeDialog();
-              }
-            });
-          }
-          break;
-      }
+    if (!valid) {
+      return;
     }
+
+    const url = isEditing.value ? "group/updateGroup" : "group/createGroup";
+    http.post(url, form.value).then((data: HttpResponse) => {
+      if (data.code === 0) {
+        getTableData();
+        closeDialog();
+      }
+    });
   });
 };
 const setOptions = () => {
   AuthorityOption.value = [];
-  if (useUserStore().gid === 0) {
+
+  AuthorityOption.value.push({ gid: -1, gname: "游客分组" });
+  if (isRootUser) {
     AuthorityOption.value.push({ gid: 0, gname: "根分组" });
   }
   setAuthorityOptions(tableData.value, AuthorityOption.value, false);
@@ -470,31 +465,53 @@ const setOptions = () => {
 const setAuthorityOptions = (AuthorityData, optionsData, disabled) => {
   AuthorityData &&
     AuthorityData.forEach(item => {
+      const isDisabled = disabled || item.gid === form.value.gid;
+      const option = {
+        gid: item.gid,
+        gname: item.gname,
+        disabled: isDisabled,
+        children: []
+      };
+
       if (item.children && item.children.length) {
-        const option = {
-          gid: item.gid,
-          gname: item.gname,
-          disabled: disabled || item.gid === form.value.gid,
-          children: []
-        };
-        setAuthorityOptions(item.children, option.children, disabled || item.gid === form.value.gid);
+        setAuthorityOptions(item.children, option.children, isDisabled);
         optionsData.push(option);
       } else {
-        const option = {
-          gid: item.gid,
-          gname: item.gname,
-          disabled: disabled || item.gid === form.value.gid
-        };
+        delete option.children;
         optionsData.push(option);
       }
     });
 };
 
+// const setAuthorityOptions = (AuthorityData, optionsData, disabled) => {
+//   AuthorityData &&
+//     AuthorityData.forEach(item => {
+//       const isDisabled = disabled || item.gid === form.value.gid;
+//       if (item.children && item.children.length) {
+//         const option = {
+//           gid: item.gid,
+//           gname: item.gname,
+//           disabled: isDisabled,
+//           children: []
+//         };
+//         setAuthorityOptions(item.children, option.children, isDisabled);
+//         optionsData.push(option);
+//       } else {
+//         const option = {
+//           gid: item.gid,
+//           gname: item.gname,
+//           disabled: isDisabled
+//         };
+//         optionsData.push(option);
+//       }
+//     });
+// };
+
 // 增加分组
 const addAuthority = parentGid => {
   initForm();
   dialogTitle.value = "新增分组";
-  dialogType.value = "add";
+  isEditing.value = false;
   form.value.parent_gid = parentGid;
   setOptions();
   dialogFormVisible.value = true;
@@ -502,13 +519,13 @@ const addAuthority = parentGid => {
 
 // 编辑分组
 const editAuthority = row => {
-  if (useUserStore().gid === row.gid) {
+  if (operatorGid === row.gid) {
     showMessage("不能编辑自己所在分组", "warning");
     return;
   }
   setOptions();
   dialogTitle.value = "编辑分组";
-  dialogType.value = "edit";
+  isEditing.value = true;
   for (const key in form.value) {
     form.value[key] = row[key];
   }

@@ -2,7 +2,7 @@
   <div>
     <el-card>
       <el-row>
-        <el-input style="width: 22%; margin-right: 10px" v-model="searchInfo.user_account" placeholder="输入操作人账号名">
+        <el-input style="width: 22%; margin-right: 10px" v-model="searchInfo.user_name" placeholder="输入操作人姓名">
           <template #prepend>操作人：</template>
         </el-input>
         <el-input style="width: 30%" v-model="searchInfo.path" placeholder="输入请求路径(可模糊查询)">
@@ -14,9 +14,9 @@
         </div>
       </el-row>
       <hr style="margin: 10px 0" />
-      <el-table stripe border :data="tableData" :header-cell-style="{ background: '#f4f4f5', color: '#606266' }">
+      <el-table v-loading="loading" stripe border :data="tableData" :header-cell-style="{ background: '#f4f4f5', color: '#606266' }">
         <el-table-column align="center" label="ID" width="120" prop="id" />
-        <el-table-column align="center" label="操作人" width="140" prop="user_account" />
+        <el-table-column align="center" label="操作人" width="140" prop="user_name" />
         <el-table-column align="center" label="日期" width="180" prop="created_at" :formatter="formatData" />
         <el-table-column align="center" label="状态码" prop="status" width="100">
           <template #default="{ row }">
@@ -24,9 +24,13 @@
             <el-tag v-else type="warning">{{ row.status }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="left" label="请求IP" prop="ip" width="120" />
-        <el-table-column align="left" label="请求方法" prop="method" width="120" />
-        <el-table-column align="left" label="请求数据" prop="body" width="100">
+        <el-table-column align="center" label="请求IP" prop="ip" width="150" />
+        <el-table-column align="center" label="请求方法" prop="method" width="120">
+          <template #default="{ row }">
+            <el-tag>{{ row.method }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="请求数据" prop="body" width="100">
           <template #default="{ row }">
             <div>
               <el-popover v-if="row.body" placement="left-start" trigger="click">
@@ -42,7 +46,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column align="left" label="响应数据" prop="resp" width="100">
+        <el-table-column align="center" label="响应数据" prop="resp" width="100">
           <template #default="{ row }">
             <div>
               <el-popover v-if="row.resp" placement="left-start" trigger="click">
@@ -57,7 +61,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column align="left" label="请求路径" prop="path" min-width="240" />
+        <el-table-column align="center" label="请求路径" prop="path" min-width="240" />
       </el-table>
       <ant-pagination v-model="pagination" :total="total" />
     </el-card>
@@ -96,14 +100,19 @@ const onSubmit = () => {
   getTableData();
 };
 
+const loading = ref(false);
+
 // 查询
 const getTableData = () => {
+  loading.value = true;
   const params = { page: pagination.value.currentPage, pageSize: pagination.value.pageSize, ...searchInfo.value };
 
   http.get("operationLog/getOperationLogList", params).then(table => {
     if (table.code === 0) {
       tableData.value = table.data.list;
       total.value = table.data.total;
+
+      loading.value = false;
     }
   });
 };

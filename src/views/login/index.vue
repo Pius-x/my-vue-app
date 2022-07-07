@@ -8,7 +8,9 @@ import { showMessage } from "/@/utils/message";
 import RiUser from "~icons/ri/user-3-fill";
 import RiLock from "~icons/ri/lock-fill";
 import { HttpResponse } from "/@/utils/http/types";
-import { setToken } from "/@/utils/auth";
+import { storageUserInfo } from "/@/utils/auth";
+import FsLogin from "/@/components/Fslogin/index.vue";
+import Motion from "/@/utils/motion";
 
 const router = useRouter();
 
@@ -31,12 +33,14 @@ const onLogin = (): void => {
   http
     .post("base/login", { userName: user.value, password: pwd.value }, false)
     .then((data: HttpResponse) => {
-      //设置Token
-      setToken(data.data);
+      if (data.code == 0) {
+        //设置Token
+        storageUserInfo(data.data);
 
-      //登录的时候初始化路由
-      initRouter().then(() => {});
-      router.push("/");
+        //登录的时候初始化路由
+        initRouter().then();
+        router.push("/");
+      }
     })
     .catch(error => {
       return error;
@@ -67,41 +71,53 @@ function onUserBlur() {
   <el-image :src="bg" class="wave" />
   <div class="login-container">
     <div class="img">
-      <component :is="currentWeek" />
+      <Motion :delay="200">
+        <component :is="currentWeek" />
+      </Motion>
     </div>
     <div class="login-box">
       <div class="login-form">
         <logos-vue class="avatar" />
-        <h2>Super Fox GM</h2>
-        <el-input
-          @focus="onUserFocus"
-          @blur="onUserBlur"
-          v-model="user"
-          size="large"
-          class="input_login w-50 m-2"
-          placeholder="输入账户名或者手机号码"
-        >
-          <template #prefix>
-            <ri-user :style="userColor" />
-          </template>
-        </el-input>
-        <el-input
-          @focus="onPwdFocus"
-          @blur="onPwdBlur"
-          type="password"
-          show-password
-          v-model="pwd"
-          size="large"
-          class="input_login w-4 m-2"
-          placeholder="输入密码"
-          @keydown.enter="onLogin"
-        >
-          <template #prefix>
-            <ri-lock :style="pwdColor" />
-          </template>
-        </el-input>
+        <Motion>
+          <h2>Super Fox GM</h2>
+        </Motion>
 
-        <el-button class="btn" @click="onLogin">登录</el-button>
+        <Motion :delay="100">
+          <el-input
+            @focus="onUserFocus"
+            @blur="onUserBlur"
+            v-model="user"
+            size="large"
+            class="input_login w-50 m-2"
+            placeholder="输入账户名或者手机号码"
+          >
+            <template #prefix>
+              <ri-user :style="userColor" />
+            </template>
+          </el-input>
+        </Motion>
+
+        <Motion :delay="150">
+          <el-input
+            @focus="onPwdFocus"
+            @blur="onPwdBlur"
+            type="password"
+            show-password
+            v-model="pwd"
+            size="large"
+            class="input_login w-4 m-2"
+            placeholder="输入密码"
+            @keydown.enter="onLogin"
+          >
+            <template #prefix>
+              <ri-lock :style="pwdColor" />
+            </template>
+          </el-input>
+        </Motion>
+        <Motion :delay="200">
+          <el-button class="btn" @click="onLogin">登录</el-button>
+        </Motion>
+        <fs-login title="登录" callback-func="base/fsLogin" />
       </div>
     </div>
   </div>

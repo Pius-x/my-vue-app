@@ -2,49 +2,29 @@ import { defineStore } from "pinia";
 import { store } from "/@/store";
 import { isUrl } from "/@/utils/is";
 import { isEqual } from "lodash-unified";
-import { storageLocal } from "/@/utils/storage";
 import { multiType, positionType } from "./types";
 
 export const useMultiTagsStore = defineStore({
   id: "pure-multiTags",
   state: () => ({
     // 存储标签页信息（路由信息）
-    multiTags: storageLocal.getItem("responsive-configure").multiTagsCache
-      ? storageLocal.getItem("responsive-tags")
-      : [
-          {
-            path: "/welcome",
-            parentPath: "/",
-            meta: {
-              title: "首页",
-              icon: "home-filled"
-            }
-          }
-        ],
-    multiTagsCache: storageLocal.getItem("responsive-configure").multiTagsCache
-  }),
-  getters: {
-    getMultiTagsCache() {
-      return this.multiTagsCache;
-    }
-  },
-  actions: {
-    multiTagsCacheChange(multiTagsCache: boolean) {
-      this.multiTagsCache = multiTagsCache;
-      if (multiTagsCache) {
-        storageLocal.setItem("responsive-tags", this.multiTags);
-      } else {
-        storageLocal.removeItem("responsive-tags");
+    multiTags: [
+      {
+        path: "/welcome",
+        parentPath: "/",
+        meta: {
+          title: "首页",
+          icon: "home-filled"
+        }
       }
-    },
-    tagsCache(multiTags) {
-      this.getMultiTagsCache && storageLocal.setItem("responsive-tags", multiTags);
-    },
+    ]
+  }),
+  getters: {},
+  actions: {
     handleTags<T>(mode: string, value?: T | multiType, position?: positionType): T {
       switch (mode) {
         case "equal":
           this.multiTags = value;
-          this.tagsCache(this.multiTags);
           break;
         case "push":
           {
@@ -74,7 +54,6 @@ export const useMultiTagsStore = defineStore({
               }
             }
             this.multiTags.push(value);
-            this.tagsCache(this.multiTags);
           }
           break;
         case "splice":
@@ -85,7 +64,6 @@ export const useMultiTagsStore = defineStore({
           } else {
             this.multiTags.splice(position?.startIndex, position?.length);
           }
-          this.tagsCache(this.multiTags);
           return this.multiTags;
         case "slice":
           return this.multiTags.slice(-1);

@@ -8,8 +8,10 @@ const errorInfo = "当前路由配置不正确，请检查配置";
 
 export function useNav() {
   const pureApp = useAppStoreHook();
+  const { bindFs, fsName, name } = useUserStore();
+
   // 用户名
-  const username: string = useUserStore()?.name;
+  const username: string = bindFs ? fsName : name;
 
   const avatarsStyle = computed(() => {
     return username ? { marginRight: "10px" } : "";

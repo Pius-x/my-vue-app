@@ -10,6 +10,7 @@ import { usePermissionStoreHook } from "/@/store/modules/permission";
 import { Router, RouteMeta, createRouter, RouteRecordRaw, RouteRecordName } from "vue-router";
 import {
   initRouter,
+  refreshRouter,
   getHistoryMode,
   getParentPaths,
   findRouteByPath,
@@ -69,15 +70,16 @@ router.beforeEach((to: toRouteType, _from, next) => {
       handleAliveRoute(newMatched);
     }
   }
-  const userInfo = storageSession.getItem("user-info");
-  NProgress.start();
+
   const externalLink = isUrl(to?.name);
-  if (!externalLink)
+  if (!externalLink) {
     to.matched.some(item => {
       if (!item.meta.title) return "";
       changeTitle(item.meta);
     });
+  }
 
+  const userInfo = storageSession.getItem("user-info");
   //判断是否登录
   if (userInfo) {
     //恢复个人信息
@@ -86,7 +88,6 @@ router.beforeEach((to: toRouteType, _from, next) => {
       // name为超链接
       if (externalLink) {
         openLink(to?.name);
-        NProgress.done();
       } else {
         next();
       }
@@ -94,9 +95,8 @@ router.beforeEach((to: toRouteType, _from, next) => {
       // 点击刷新时 更新路由
       if (usePermissionStoreHook().wholeMenus.length === 0) {
         //刷新的时候初始化路由
-        initRouter().then((router: Router) => {
-          //恢复标签信息
-          if (!useMultiTagsStoreHook().getMultiTagsCache) {
+        refreshRouter(userInfo).then(() => {
+          initRouter().then((router: Router) => {
             const handTag = (path: string, parentPath: string, name: RouteRecordName, meta: RouteMeta): void => {
               useMultiTagsStoreHook().handleTags("push", {
                 path,
@@ -131,8 +131,7 @@ router.beforeEach((to: toRouteType, _from, next) => {
                 return router.push(path);
               }
             }
-          }
-          router.push(to.fullPath);
+          });
         });
       }
       next();

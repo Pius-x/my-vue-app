@@ -62,8 +62,7 @@ const settings = reactive({
   weakVal: instance.configure.weak,
   tabsVal: instance.configure.hideTabs,
   showLogo: instance.configure.showLogo,
-  showModel: instance.configure.showModel,
-  multiTagsCache: instance.configure.multiTagsCache
+  showModel: instance.configure.showModel
 });
 
 function storageConfigureChange<T>(key: string, val: T): void {
